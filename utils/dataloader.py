@@ -1,7 +1,8 @@
 import numpy as np
 import random
 
-class custom_dataloder():
+
+class CustomDataLoader:
 
     def __init__(self, dataset, batch_size):
         self.dataset = dataset
@@ -13,7 +14,6 @@ class custom_dataloder():
 
     def __next__(self):
         index = random.sample(list(range(len(self.dataset))), self.batch_size)
-
         _batchdata = np.array(self.dataset[index[0]], dtype=np.object)
         _cnum = 0
         while _cnum < self.num_category:
@@ -25,6 +25,5 @@ class custom_dataloder():
                 _batchdata[_cnum] = np.concatenate((_batchdata[_cnum], added_data), axis=0)
                 i = i + 1
             _cnum = _cnum + 1
-
         return _batchdata
 

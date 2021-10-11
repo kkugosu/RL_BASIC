@@ -1,9 +1,10 @@
 from collections import namedtuple, deque
 from torch.utils.data import Dataset
 
-Transition = namedtuple('Transition',('state', 'action', 'next_state', 'reward'))
+Transition = namedtuple('Transition', ('state', 'action', 'next_state', 'reward'))
 
-class envdata(Dataset):
+
+class EnvData(Dataset):
     def __init__(self, capacity):
         self.memory = deque([], maxlen=capacity)
 

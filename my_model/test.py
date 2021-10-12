@@ -1,6 +1,6 @@
-from my_model import DQN
+from my_model import Network
 
-a = DQN.DQN(2, 2, 3)
+a = Network.DQN(2, 2, 3)
 k = "aaa"
 if k == "aaa":
     print("yes")

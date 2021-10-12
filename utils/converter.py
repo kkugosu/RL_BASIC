@@ -50,7 +50,7 @@ class Converter:
 
     def rand_act(self):
         if self.env == "hope":
-            return np.random.randint(5, size=3)
+            return (np.random.randint(5, size=3) - 2)/2
         elif self.env == "cart":
             return np.random.randint(2)
         else:

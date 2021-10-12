@@ -5,12 +5,35 @@ from utils import converter
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
-class ForwardMem:
-    def __init__(self, model, env, envname):
+class ManageMem:
+    def __init__(self, model, modelname, env, envname):
         self.model = model
         self.env = env
         self.envname = envname
+        self.modelname = modelname
         self.converter = converter.Converter(self.envname)
+
+    def _select_act(self, pre_observation):
+        if self.modelname == "DQN":
+            if random.random() < 0.9:
+                with torch.no_grad():
+                    basedqn_action = self.model(pre_observation)
+                max_action = np.argmax(basedqn_action.cpu().numpy())
+                action = self.converter.index2act(max_action, 1)
+            else:
+                action = self.converter.rand_act()
+            return action
+
+        elif self.modelname == "PG":
+            with torch.no_grad():
+                basedqn_action = self.model(pre_observation)
+            max_action = np.argmax(basedqn_action.cpu().numpy())
+            action = self.converter.index2act(max_action, 1)
+            return action
+
+        else:
+            print("model name error")
+            return None
 
     def renewal_memory(self, renewal_capacity, dataset):
         total_num = 0
@@ -21,15 +44,10 @@ class ForwardMem:
             t = 0
             while t < renewal_capacity - total_num:
                 t = t + 1
-                if random.random() > 0.9:
-                    with torch.no_grad():
-                        basedqn_action = self.model(pre_observation)
-                    max_action = np.argmax(basedqn_action.cpu().numpy())
-                    action = self.converter.index2act(max_action, 1)
-                else:
-                    action = (self.converter.rand_act() / 2) - 1
+                action = self._select_act(pre_observation)
                 observation, reward, done, info = self.env.step(action)
-                dataset.push(pre_observation, action, observation, reward - np.float32(done))
+                np_pre_observation = pre_observation.cpu().numpy()
+                dataset.push(np_pre_observation, action, observation, reward - np.float32(done))
                 pre_observation = torch.tensor(observation, device=device, dtype=torch.float32)
                 if done:
                     # print("Episode finished after {} timesteps".format(t+1))

@@ -20,11 +20,10 @@ class Train:
         while i < iteration:
             # print(i)
             pre_observation, action, observation, reward = next(iter(self.dataloader))
-
             action_idx = self.converter.act2index(action, batchsize).astype(np.int64)
             action_idx = torch.from_numpy(action_idx).to(device).unsqueeze(axis=-1)
-
-            state_action_values = torch.gather(self.updmodel1(pre_observation), 1, action_idx)
+            pre_obs_to_cuda = torch.tensor(pre_observation, dtype=torch.float32).to(device)
+            state_action_values = torch.gather(self.updmodel1(pre_obs_to_cuda), 1, action_idx)
 
             obs_to_cuda = torch.tensor(observation, dtype=torch.float32).to(device)
             reward_to_cuda = torch.tensor(reward, dtype=torch.float32).to(device)

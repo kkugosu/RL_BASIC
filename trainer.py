@@ -12,10 +12,11 @@ class Train:
         self.converter = converter.Converter(env_name)
         self.data_loader = data_loader
         self.model_name = model_name
-
+        self.softmax = nn.Softmax(dim=-1)
     def training(self, iteration, batch_size, *model, optimizer):
         GAMMA = 0.999
         i = 0
+        loss = None
         upd_model = None
         base_model = None
 
@@ -44,6 +45,11 @@ class Train:
                     expected_state_action_values = GAMMA * torch.argmax(nextobs, dim=1) + reward_to_cuda
                 loss = criterion(state_action_values, expected_state_action_values.unsqueeze(axis=-1))
             elif self.model_name == "PG":
+                alpha = 0.1
+                pre_obs_softmax = self.softmax(base_model(pre_obs_to_cuda))
+                state_action_values = torch.gather(upd_model(pre_obs_softmax), 1, action_idx)
+                weight = torch.log(state_action_values)
+                loss = -alpha*weight*reward_to_cuda
                 print("wait")
             else:
                 print("training error")

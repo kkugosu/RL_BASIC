@@ -50,6 +50,7 @@ class ManageMem:
             temp_obs = np.array([])
             temp_reward = np.array([])
             while t < renewal_capacity - total_num: #if pg, gain accumulate
+                print(t)
                 action = self._select_act(pre_observation)
                 observation, reward, done, info = self.env.step(action)
                 np_pre_observation = pre_observation.cpu().numpy()

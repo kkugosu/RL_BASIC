@@ -11,4 +11,5 @@ PPO
 
 <img src="https://render.githubusercontent.com/render/math?math=\frac{n!}{k!(n-k)!} = {n \choose k}">
 
-<img src="https://render.githubusercontent.com/render/math?math=sample \ \left\{\tau^ i \right\} from \ \ \pi_\theta \ \left(a_t \ \ | \ \ s_t \right) ">
+<img src="https://render.githubusercontent.com/render/math?math= 1. \ sample \ \left\{\tau^ i \right\} from \ \ \pi_\theta \ \left(a_t \ \ | \ \ s_t \right) ">
+<img src="https://render.githubusercontent.com/render/math?math= 2. \ \nabla">

@@ -7,7 +7,4 @@ TRPO
 DDPG
 PPO
 
-$$
-\frac{n!}{k!(n-k)!} = {n \choose k}
-$$
-
+<img src="https://render.githubusercontent.com/render/math?math=e^{i \pi} = -1">

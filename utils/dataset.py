@@ -1,7 +1,7 @@
 from collections import namedtuple, deque
 from torch.utils.data import Dataset
 
-Transition = namedtuple('Transition', ('state', 'action', 'next_state', 'reward'))
+Transition = namedtuple('Transition', ('state', 'action', 'next_state', 'reward', 'done'))
 
 
 class EnvData(Dataset):

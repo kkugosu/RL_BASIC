@@ -13,6 +13,7 @@ class Train:
         self.data_loader = data_loader
         self.model_name = model_name
         self.softmax = nn.Softmax(dim=-1)
+
     def training(self, iteration, batch_size, *model, optimizer):
         GAMMA = 0.999
         i = 0
@@ -68,3 +69,38 @@ class Train:
         # print("train complete iter = ", iteration)
         return loss
 
+'''
+                elif self.modelname == "PG":
+                    if t == 0:
+                        temp_preobs = np.array([np_pre_observation])
+                        temp_action = np.array([action])
+                        temp_obs = np.array([observation])
+                        temp_reward = np.array([reward])
+                    else:
+                        temp_gamma = np.power(gamma, t)
+                        temp_preobs = np.append(temp_preobs, np.array([pre_observation]), axis=0)
+                        temp_action = np.append(temp_action, np.array([action]), axis=0)
+                        temp_obs = np.append(temp_obs, np.array([observation]), axis=0)
+                        temp_reward = np.append(temp_reward, np.array([reward*temp_gamma]), axis=0)
+                else:
+                    print("renewal_memory_error")
+                '''
+'''
+                if done:
+                    temp_reward[t-1] = temp_reward[t-1] - np.float32(done)*temp_gamma
+                    # if episode done in 5 step, t is 5
+                    if self.modelname == "PG":
+                        pg_step = 0
+                        while pg_step < t:  # per step
+                            reward_step = pg_step
+                            gain = np.float32(0)
+                            while reward_step < t:
+                                gain = gain + temp_reward[reward_step]
+                                reward_step = reward_step + 1
+                            dataset.push(temp_preobs, temp_action, temp_obs, gain)
+                            pg_step = pg_step + 1
+                    # print("Episode finished after {} timesteps".format(t))
+                    total_num += t
+                    t = 0
+                    break
+                '''

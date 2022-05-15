@@ -15,7 +15,7 @@ class CustomDataLoader:
         return self
 
     def __next__(self):
-        if suffle == True:
+        if self.suffle == True:
             index = random.sample(list(range(len(self.dataset))), self.batch_size)
         else:
             index = [i + self.iternum * self.batch_size for i in range(self.batch_size)]

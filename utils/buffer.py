@@ -35,6 +35,22 @@ class Simulate:
                     break
             pause = t
 
+class RewardConverter:
+
+    def __init__(self, step_size):
+        self.step_size = step_size
+
+    def reward_converter(self, dataloader):
+        t = 0
+        pre_observation, action, observation, reward, done = next(iter(self.data_loader))
+        #extract done index
+        #cal per trajectary to_end length ex) 4 3 2 1 6 5 4 3 2 1
+        #set step to upper bound ex) step = 5 ->  4 3 2 1 5 5 4 3 2 1
+        #cal newreward per state-action pair
+        #change observation to last step indexed observation state
+        return tmp_dataset
+
+
 
 '''
     def rendering(self, forwardstep):

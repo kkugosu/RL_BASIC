@@ -37,18 +37,48 @@ class Simulate:
 
 class RewardConverter:
 
-    def __init__(self, step_size):
+    def __init__(self, step_size, dataloader):
         self.step_size = step_size
+        self.dataloader = dataloader
 
-    def reward_converter(self, dataloader):
+    def reward_converter(self, dataset):
         t = 0
-        pre_observation, action, observation, reward, done = next(iter(self.data_loader))
-        #extract done index
-        #cal per trajectary to_end length ex) 4 3 2 1 6 5 4 3 2 1
-        #set step to upper bound ex) step = 5 ->  4 3 2 1 5 5 4 3 2 1
-        #cal newreward per state-action pair
-        #change observation to last step indexed observation state
-        return tmp_dataset
+        pre_observation, action, observation, reward, done = next(iter(self.dataloader))
+        # cal per trajectary to_end length ex) 4 3 2 1 6 5 4 3 2 1
+        # set step to upper bound ex) step = 5 ->  4 3 2 1 5 5 4 3 2 1
+        global_index = len(done) - 1
+        local_index = 0
+        done_penalty = 1
+        while 0 <= global_index:
+            if done[global_index] == 1:
+                local_index = 1
+                done[global_index] = local_index
+                reward[global_index] -= done_penalty
+                print("reset")
+            else:
+                local_index = local_index + 1
+                if local_index > self.step_size:
+                    local_index = self.step_size
+                done[global_index] = local_index
+            global_index = global_index - 1
+        # cal newreward per state-action pair
+        gamma = 0.9
+        global_index = 0
+        while global_index < len(done):
+            observation[global_index] = observation[global_index + done[global_index] - 1]
+            # change observation to last step indexed observation state
+            local_index = 1
+            while local_index < done[global_index]:
+                tmp = reward[global_index + local_index] * gamma ** local_index
+                reward[global_index] += tmp
+                local_index = local_index + 1
+            global_index += 1
+        global_index = 0
+        while global_index < len(done):
+            dataset.push(np_pre_observation[global_index], action[global_index], observation[global_index],
+                         reward[global_index], np.float32(done[global_index]))
+            global_index += 1
+        return dataset
 
 
 

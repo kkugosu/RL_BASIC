@@ -4,7 +4,7 @@ from torch.utils.data import Dataset
 Transition = namedtuple('Transition', ('state', 'action', 'next_state', 'reward', 'done'))
 
 
-class EnvData(Dataset):
+class SimData(Dataset):
     def __init__(self, capacity):
         self.memory = deque([], maxlen=capacity)
 

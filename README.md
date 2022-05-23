@@ -17,7 +17,7 @@ choose a2 and next state become s'. we calculate Q(s'a') from static network
 
 <img width="603" alt="스크린샷 2022-05-23 오후 8 35 29" src="https://user-images.githubusercontent.com/24292848/169810706-73d3b59b-0db0-4176-8243-8b2fb24a0697.png">
 
-update (nework_to_update) to reduce gap between Q(s,a2)(which is 2) + reward(which is 5), Q(s'a')(which is 5)
+update (nework_to_update) to reduce gap between Q(s,a2)(which is 2), reward(which is 5) + Q(s'a')(which is 5)
 
 TRPO
 DDPG

@@ -11,6 +11,9 @@
 
 ## DQN (with static network)
 
+# <img src="https://render.githubusercontent.com/render/math?math=1 \. load network to update parameters to static network parameters \ \phi' \Leftarrow \phi \ ">
+
+
 <img width="647" alt="스크린샷 2022-05-23 오후 8 30 01" src="https://user-images.githubusercontent.com/24292848/169809875-e733ff29-249f-43e1-95bc-a9209d0d0ae7.png">
 
 choose a2 and next state become s'. we calculate Q(s'a') from static network

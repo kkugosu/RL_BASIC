@@ -11,7 +11,7 @@
 
 ## DQN (with static network)
 
-# <img src="https://render.githubusercontent.com/render/math?math=1 \. \ \ sample \ \left\{\tau^ i \right\} from \ \ \pi_\theta \ \left(a_t \ \ | \ \ s_t \right) ">
+# <img src="https://render.githubusercontent.com/render/math?math=1 \.  \ \left\{\tau^ i \right\} from \ \ \pi_\theta \ \left(a_t \ \ | \ \ s_t \right) ">
 
 # <img src="https://render.githubusercontent.com/render/math?math=1 \. \ \ \ \left\{\tau^ i \right\}  \ \ \pi_\theta \ \left(a_t \ \ | \ \ s_t \right) ">
 

@@ -31,9 +31,9 @@ this method can't guarantee convergence. because of max operation, this fomula t
 
 ## AC
 
-$$ 1. take action a ~ \pi_\theta (a|s), get (s, a, s', r), store in R $$
-$$$$
-$$$$
+$$ 1. take \ action \ a ~ \pi_\theta (a|s), get (s, a, s', r), store \ in \ memory $$
+$$ 2. sample \ a \ batch (s_i, a_i, r_i, s_i') from \ memory$$
+$$ 3. \phi \leftarrow \phi - \alpha \Sigma_i {dQ \over d\phi} (s_i , a_i) (Q_\phi (s_i , a_i) - (r(s_i , a_i) + \gamma Q_\phi'(s_i',a_i'))) $$
 $$$$
 $$$$
 

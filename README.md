@@ -56,6 +56,6 @@ $$ 4.\ \theta \leftarrow \theta + \beta \Sigma_j {d\mu \over d\theta} (s_j){dQ_\
 $$ we \ just\ have\ to\ find\ \theta \ which\ maxmize\ Q,\ {dQ_\phi \over d\theta} = {da \over d\theta} {dQ_\phi \over da}$$
 
 
-$$ TRPO
-$$ PPO
+## TRPO
+## PPO
 

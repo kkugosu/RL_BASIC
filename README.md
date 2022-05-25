@@ -12,7 +12,7 @@
 ## DQN (with static network)
 
 $$ 1 \. save\ update \ network\ parameters\ to\ static\ network\ parameters: \phi ' \leftarrow \phi $$
-$$ 2 \. collect dataset {(s_i, a_i, s_i ' , r_i)}$$
+$$ 2 \. collect dataset \left\{ \left(s_i, a_i, s_i ' , r_i \right) \right\} $$
 
 <img width="647" alt="스크린샷 2022-05-23 오후 8 30 01" src="https://user-images.githubusercontent.com/24292848/169809875-e733ff29-249f-43e1-95bc-a9209d0d0ae7.png">
 

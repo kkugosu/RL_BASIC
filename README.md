@@ -38,7 +38,18 @@ $$ "you\ can\ pick\ a_i'\ from\ memory\ or\ from\ current\ policy\ anything\ is\
 $$ 4.\ \nabla_\theta J(\theta) \approx {1 \over N} \Sigma_i \nabla_\theta log \pi_\theta (a_i | s_i) Q_\phi (s_i , a_i) $$
 $$ 5.\ \theta \leftarrow \theta + \alpha \nabla_\theta J (\theta) $$
 
+## DDPG
+
+previously i sampled action from continuous space but there are many ways to choose action in continuous space.
+
+cem and cma-es works in low dimensional space
+
+naf assume q value follow gaussian distribution
+
+ddpg directly choose one action which make max q value.
+
+
+
 TRPO
-DDPG
 PPO
 

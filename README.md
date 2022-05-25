@@ -12,7 +12,7 @@
 ## DQN (with static network)
 
 **The Cauchy-Schwarz Inequality**
-# $$\left( \sum_{k=1}^n a_k b_k \right)^2 \leq \left( \sum_{k=1}^n a_k^2 \right) \left( \sum_{k=1}^n b_k^2 \right)$$
+# $$ aaaa \theta $$
 
 # <img src="https://render.githubusercontent.com/render/math?math=1 \. \ \ \left\{\tau^ i \right\} from \ \ \pi_\theta \ \left(a_t \ \ | \ \ s_t \right) ">
 

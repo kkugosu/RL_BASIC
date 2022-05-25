@@ -29,7 +29,15 @@ this network represent $ Q_\phi' value $
 update (nework_to_update) to reduce gap between Q(s,a2)(which is 2), reward(which is 5) + Q(s'a')(which is 5)
 this method can't guarantee convergence. because of max operation, this fomula try to converge infinity norm and L2 norm at the same time. this is impossible in general case
 
+## AC
+
+$$ 1. take action a ~ \pi_\theta (a|s), get (s, a, s', r), store in R $$
+$$$$
+$$$$
+$$$$
+$$$$
+
 TRPO
 DDPG
 PPO
-AC
+

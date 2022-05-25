@@ -11,7 +11,7 @@
 
 ## DQN (with static network)
 
-$$ 1 \. save target network parameters: \phi^' \leftarrow \phi $$
+$$ 1 \. save target network parameters: \phi \leftarrow \phi $$
 
 # <img src="https://render.githubusercontent.com/render/math?math=1 \. \ \ \left\{\tau^ i \right\} from \ \ \pi_\theta \ \left(a_t \ \ | \ \ s_t \right) ">
 

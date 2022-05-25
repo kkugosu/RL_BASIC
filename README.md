@@ -29,7 +29,7 @@ this network represent $ Q_\phi' value $
 update (nework_to_update) to reduce gap between Q(s,a2)(which is 2), reward(which is 5) + Q(s'a')(which is 5)
 this method can't guarantee convergence. because of max operation, this fomula try to converge infinity norm and L2 norm at the same time. this is impossible in general case
 
-## AC
+## AC (which use q value and stepsize = 1)
 
 $$ 1.\ take \ action \ a \sim \pi_\theta (a|s), store (s, a, s', r)\ in \ memory $$
 $$ 2.\ sample \ a \ batch \ (s_i, a_i, r_i, s_i')\ from \ memory, \ load \ \phi' \ from \ \phi$$
@@ -54,6 +54,9 @@ $$ 3.\ \phi \leftarrow \phi - \alpha \Sigma_i {dQ \over d\phi} (s_i , a_i) (Q_\p
 $$ "you\ can\ pick\ a_i'\ from\ memory\ or\ from\ current\ policy \ \mu' \ anything\ is\ okey"$$
 $$ 4.\ \theta \leftarrow \theta + \beta \Sigma_j {d\mu \over d\theta} (s_j){dQ_\phi \over da}(s_j, \mu(s_j)) $$
 $$ we \ just\ have\ to\ find\ \theta \ which\ maxmize\ Q,\ {dQ_\phi \over d\theta} = {da \over d\theta} {dQ_\phi \over da}$$
-TRPO
-PPO
+
+## TRPO
+
+
+## PPO
 

@@ -83,7 +83,7 @@ $$ subject \ to \ {1 \over 2}(\theta_{old} - \theta)^T A (\theta_{old} - \theta)
 
 A equals fisher matrix which is hessian of kld. 
 
-we can 
+when solve that formula, we get updating process like this $ \theta_{new} - \theta_{old} = {1 \over \lambda} A (\theta_{old})^{-1} \nabla_\theta L (\theta)$
 
 ## PPO
 

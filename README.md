@@ -75,7 +75,7 @@ auther use the fact that $ \pi_{i+1} = \underset{\pi}{argmax}(L_\pi_i (\pi) CD_{
 
 this is last formula 
 
-$$ \underset{\pi}{maximize}(\nabla_\theta L_\theta_old (\theta) (\theta - \theta_old) $$
+$$ \pi{maximize}(\nabla_\theta L_\theta_old (\theta) (\theta - \theta_old) $$
 subject to ${1 \over 2}(\theta_old - \theta)^T A (\theta_old - \theta) \leqq \delta$
 
 A equals fisher matrix which is hessian of kld.

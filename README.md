@@ -79,7 +79,7 @@ this is last formula
 $$ \underset{\theta}{maximize} (\nabla_\theta L_{\theta old} (\theta) \cdot (\theta - \theta_{old}) )$$
 
 
-$$ subject to {1 \over 2}(\theta_{old} - \theta)^T A (\theta_{old} - \theta) \leqq \delta $$
+$$ subject \ to \ {1 \over 2}(\theta_{old} - \theta)^T A (\theta_{old} - \theta) \leqq \delta $$
 
 A equals fisher matrix which is hessian of kld. 
 

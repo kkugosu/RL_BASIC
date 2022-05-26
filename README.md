@@ -101,4 +101,4 @@ $$ 4. update \ \theta $$
 
 ## PPO
  
-$$ L_t^CLIP$$
+$$ L_t^{CLIP + VF + S} (\theta) = \hat{E_t}[sadf] $$

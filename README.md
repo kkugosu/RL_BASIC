@@ -69,5 +69,8 @@ $$ we \ just\ have\ to\ find\ \theta \ which\ maxmize\ Q,\ {dQ_\phi \over d\thet
 
 
 ## TRPO
+
+when distributional shift occered while updating, parameter change but performance does not increasing. to deal with this problem, trpo set lower bound of performance while updating parameter. in this paper, auther change $ \Sum_s $
+
 ## PPO
 

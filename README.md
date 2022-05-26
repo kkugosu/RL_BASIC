@@ -101,4 +101,4 @@ $$ 4. update \ \theta $$
 
 ## PPO
  
-$$ L_t^{CLIP + VF + S} (\theta) = \hat{E_t} (L_t^{CLIP} (\theta) - c_1L_t^{VF}) $$
+$$ L_t^{CLIP + VF + S} (\theta) = \hat{E_t} (L_t^{CLIP} (\theta) - c_1L_t^{VF}(\theta) + c_2S(s_t)) $$

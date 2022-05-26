@@ -76,10 +76,10 @@ auther use the fact that $ \pi_{i+1} = \underset{\pi}{argmax} ( L_{\pi i} (\pi) 
 
 this is last formula 
 
-$$ \underset{\pi}{maximize} (\nabla_\theta L_{\theta old} (\theta) \cdot (\theta - \theta_{old}) )$$
+$$ \underset{\theta}{maximize} (\nabla_\theta L_{\theta old} (\theta) \cdot (\theta - \theta_{old}) )$$
 
-$$ \pi{maximize}(\nabla_\theta L_\theta_old (\theta) (\theta - \theta_old) $$
-subject to ${1 \over 2}(\theta_{old} - \theta)^T A (\theta_{old} - \theta) \leqq \delta$
+
+$$ subject to {1 \over 2}(\theta_{old} - \theta)^T A (\theta_{old} - \theta) \leqq \delta $$
 
 A equals fisher matrix which is hessian of kld. 
 

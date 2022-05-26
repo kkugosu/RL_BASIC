@@ -101,3 +101,4 @@ $$ 4. update \ \theta $$
 
 ## PPO
  
+$$ L_t^CLIP$$

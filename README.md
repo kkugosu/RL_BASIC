@@ -12,7 +12,9 @@
 ## DQN (with static network)
 
 $$ 1 \. save\ update \ network\ parameters\ to\ static\ network\ parameters: \phi ' \leftarrow \phi $$
+
 $$ 2 \. collect \ dataset \ ( ( s_i, a_i, s_i ' , r_i ) )  \ using \ some \ policy, \ add \ it\ to\ memory $$
+
 $$ 3 \. \phi \leftarrow \phi - \alpha \Sigma_i {dQ \over d\phi} (s_i , a_i) (Q_\phi (s_i , a_i) - (r(s_i , a_i) + \gamma max_{a'}Q_{\phi'}(s_i',a_i'))) $$
 
 
@@ -32,10 +34,15 @@ this method can't guarantee convergence. because of max operation, this fomula t
 ## AC
 
 $$ 1.\ take \ action \ a \sim \pi_\theta (a|s), store (s, a, s', r)\ in \ memory $$
+
 $$ 2.\ sample \ a \ batch \ (s_i, a_i, r_i, s_i')\ from \ memory, \ load \ \phi' \ from \ \phi$$
+
 $$ 3.\ \phi \leftarrow \phi - \alpha \Sigma_i {dQ \over d\phi} (s_i , a_i) (Q_\phi (s_i , a_i) - (r(s_i , a_i) + \gamma Q_{\phi'}(s_i',a_i'))) $$
+
 $$ "you\ can\ pick\ a_i'\ from\ memory\ or\ from\ current\ policy\ anything\ is\ okey"$$
+
 $$ 4.\ \nabla_\theta J(\theta) \approx {1 \over N} \Sigma_i \nabla_\theta log \pi_\theta (a_i | s_i) Q_\phi (s_i , a_i) $$
+
 $$ 5.\ \theta \leftarrow \theta + \alpha \nabla_\theta J (\theta) $$
 
 ## DDPG
@@ -49,10 +56,15 @@ naf assume q value follow gaussian distribution
 ddpg directly choose one action which make max q value.
 
 $$ 1.\ take \ action \ a \sim \pi_\theta (a|s), store (s, a, s', r)\ in \ memory $$
+
 $$ 2.\ sample \ a \ batch \ (s_i, a_i, r_i, s_i')\ from \ memory, \ load \ \phi' \ from \ \phi$$
+
 $$ 3.\ \phi \leftarrow \phi - \alpha \Sigma_i {dQ \over d\phi} (s_i , a_i) (Q_\phi (s_i , a_i) - (r(s_i , a_i) + \gamma Q_{\phi'}(s_i',a_i'))) $$
+
 $$ "you\ can\ pick\ a_i'\ from\ memory\ or\ from\ current\ policy \ \mu' \ anything\ is\ okey"$$
+
 $$ 4.\ \theta \leftarrow \theta + \beta \Sigma_j {d\mu \over d\theta} (s_j){dQ_\phi \over da}(s_j, \mu(s_j)) $$
+
 $$ we \ just\ have\ to\ find\ \theta \ which\ maxmize\ Q,\ {dQ_\phi \over d\theta} = {da \over d\theta} {dQ_\phi \over da}$$
 
 

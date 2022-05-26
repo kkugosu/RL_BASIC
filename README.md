@@ -72,7 +72,9 @@ $$ we \ just\ have\ to\ find\ \theta \ which\ maxmize\ Q,\ {dQ_\phi \over d\thet
 
 when distributional shift occered while updating, parameter change but performance does not increasing. to deal with this problem, trpo set lower bound of performance while updating parameter. in this paper, auther change $ \sum_s \rho_\tilde{\pi} (s) \sum_a \tilde{\pi} (a|s) A_\pi (s,a) $ to $ \sum_s \rho_\pi (s) \sum_a \tilde{\pi} (a|s) A_\pi (s,a) $ because we can't use trajectary of updated policy. even though we make policy close to order one, we have to deal with derivirative form of that formula which is crazy. so we change formula and add $ -CD_{KL}^{max}(\pi_i , \pi)$ penalty term which allow to change formula.
 
-auther use the fact that $ \pi_{i+1} = \underset{\pi}{argmax} (L_\pi_i (\pi) CD_{KL}^{max}(\pi_i , \pi)) $ is one of form of lagrange mulifiplier formula, they manipulate term C to converge more faster with take a risk of little distributional shift.
+auther use the fact that $ \pi_{i+1} = \underset{\pi}{argmax} $
+
+$(L_\pi_i (\pi) CD_{KL}^{max}(\pi_i , \pi)) $ is one of form of lagrange mulifiplier formula, they manipulate term C to converge more faster with take a risk of little distributional shift.
 
 this is last formula 
 

@@ -96,4 +96,4 @@ $$ 3.\ \phi \leftarrow \phi - \alpha \Sigma_i {dQ \over d\phi} (s_i , a_i) (Q_\p
 $$ 4. update \ \theta $$
 
 ## PPO
-
+ 

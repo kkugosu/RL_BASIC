@@ -93,7 +93,7 @@ $$ 2.\ sample \ a \ batch \ (s_i, a_i, r_i, s_i')\ from \ memory, \ load \ \phi'
 
 $$ 3.\ \phi \leftarrow \phi - \alpha \Sigma_i {dQ \over d\phi} (s_i , a_i) (Q_\phi (s_i , a_i) - (r(s_i , a_i) + \gamma Q_{\phi'}(s_i',a_i'))) $$
 
-$$ 4. update \theta $$
+$$ 4. update \ \theta $$
 
 ## PPO
 

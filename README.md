@@ -122,6 +122,6 @@ $$ 4. update \ \theta $$
 
 we don't have to use Q function approximization. because V function and policy loss function share parameter $ \theta $
 
-$$ L^{CLIP} (\theta) = \hat{E_t} (min (r_t (\theta) \hat{A_t} , clip (r_t (\theta)), 1 - \epsilon, 1 + \epsilon))$$
+$$ L^{CLIP} (\theta) = \hat{E_t} (min (r_t (\theta) \hat{A_t} , clip (r_t (\theta), 1 - \epsilon, 1 + \epsilon)\hat{A_t})$$
 
 $$ L_t^{CLIP + VF + S} (\theta) = \hat{E_t} (L_t^{CLIP} (\theta) - c_1L_t^{VF}(\theta) + c_2S [\pi_\theta] (s_t)) $$

@@ -56,9 +56,11 @@ $$ 2.\ sample \ a \ batch \ (s_i, a_i, r_i, s_i')\ from \ memory, \ load \ \phi'
 
 $$ 3.\ \phi \leftarrow \phi - \alpha \Sigma_i {dQ \over d\phi} (s_i , a_i) (Q_\phi (s_i , a_i) - (r(s_i , a_i) + \gamma Q_{\phi'}(s_i',a_i'))) $$
 
-$$ "you\ can\ pick\ a_i'\ from\ memory\ or\ from\ current\ policy\ anything\ is\ okey"$$
+$$ "you\ can\ pick\ a_i'\ from\ current\ policy\ "$$
 
 $$ 4.\ \nabla_\theta J(\theta) \approx {1 \over N} \Sigma_i \nabla_\theta log \pi_\theta (a_i | s_i) Q_\phi (s_i , a_i) $$
+
+$$ "you\ can\ pick\ a_i\ from\ current\ policy\ "$$
 
 $$ 5.\ \theta \leftarrow \theta + \alpha \nabla_\theta J (\theta) $$
 
@@ -78,7 +80,7 @@ $$ 2.\ sample \ a \ batch \ (s_i, a_i, r_i, s_i')\ from \ memory, \ load \ \phi'
 
 $$ 3.\ \phi \leftarrow \phi - \alpha \Sigma_i {dQ \over d\phi} (s_i , a_i) (Q_\phi (s_i , a_i) - (r(s_i , a_i) + \gamma Q_{\phi'}(s_i',a_i'))) $$
 
-$$ "you\ can\ pick\ a_i'\ from\ memory\ or\ from\ current\ policy \ \mu' \ anything\ is\ okey"$$
+$$ "you\ can\ pick\ a_i'\ from\ current\ policy \ \mu' \ "$$
 
 $$ we \ just\ have\ to\ find\ \theta \ which\ maxmize\ Q,\ {dQ_\phi \over d\theta} = {da \over d\theta} {dQ_\phi \over da}$$
 

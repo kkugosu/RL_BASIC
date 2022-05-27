@@ -120,7 +120,7 @@ $$ 4. update \ \theta $$
 
 ## PPO
 
-we don't have to use Q function approximization. because V function and policy loss function share parameter $ \theta $
+we don't have to use Q function approximization. because V function and policy function share parameter $ \theta $ and we update these functions simultaneously, we always refill buffer with new policy.
 
 $$ L^{CLIP} (\theta) = \hat{E_t} (min (r_t (\theta) \hat{A_t} , clip (r_t (\theta), 1 - \epsilon, 1 + \epsilon)\hat{A_t})$$
 

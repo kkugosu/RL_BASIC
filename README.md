@@ -37,6 +37,7 @@ this method can't guarantee convergence. because of max operation, this fomula t
 
 ## AC
 
+AC is one of policy gradient which use Q function(network) as baseline
 AC use three network. first network is for policy update. 
 
 <img width="647" alt="스크린샷 2022-05-23 오후 8 14 51" src="https://user-images.githubusercontent.com/24292848/169807378-9496b69c-bbec-4a45-ad6f-31b0215797ab.png">

@@ -37,6 +37,8 @@ this method can't guarantee convergence. because of max operation, this fomula t
 
 ## AC
 
+AC use three network. first network is for policy update. second and third network is for q update. 
+
 <img width="647" alt="스크린샷 2022-05-23 오후 8 14 51" src="https://user-images.githubusercontent.com/24292848/169807378-9496b69c-bbec-4a45-ad6f-31b0215797ab.png">
 
 <img width="647" alt="스크린샷 2022-05-23 오후 8 30 01" src="https://user-images.githubusercontent.com/24292848/169809875-e733ff29-249f-43e1-95bc-a9209d0d0ae7.png">

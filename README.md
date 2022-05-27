@@ -74,6 +74,10 @@ naf assume q value follow gaussian distribution
 
 ddpg directly choose one action which make max q value.
 
+this only different from ac in policy network
+
+<img width="596" alt="스크린샷 2022-05-27 오전 11 39 39" src="https://user-images.githubusercontent.com/24292848/170617963-30fb3448-ccc4-4fb3-871c-89b20604792f.png">
+
 $$ 1.\ take \ action \ a \sim \pi_\theta (a|s), store (s, a, s', r)\ in \ memory $$
 
 $$ 2.\ sample \ a \ batch \ (s_i, a_i, r_i, s_i')\ from \ memory, \ load \ \phi' \ from \ \phi$$

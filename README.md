@@ -76,7 +76,7 @@ ddpg directly choose one action which make max q value.
 
 this only different from ac in policy network
 
-<img width="596" alt="스크린샷 2022-05-27 오전 11 39 39" src="https://user-images.githubusercontent.com/24292848/170617963-30fb3448-ccc4-4fb3-871c-89b20604792f.png">
+<img width="574" alt="스크린샷 2022-05-27 오전 11 41 31" src="https://user-images.githubusercontent.com/24292848/170618175-db7ef51a-6b7e-46c7-ae8e-0fc7e5437d36.png">
 
 $$ 1.\ take \ action \ a \sim \pi_\theta (a|s), store (s, a, s', r)\ in \ memory $$
 

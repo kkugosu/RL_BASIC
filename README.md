@@ -37,9 +37,11 @@ this method can't guarantee convergence. because of max operation, this fomula t
 
 ## AC
 
-AC use three network. first network is for policy update. second and third network is for q update. 
+AC use three network. first network is for policy update. 
 
 <img width="647" alt="스크린샷 2022-05-23 오후 8 14 51" src="https://user-images.githubusercontent.com/24292848/169807378-9496b69c-bbec-4a45-ad6f-31b0215797ab.png">
+
+second and third network below is for q update. 
 
 <img width="603" alt="스크린샷 2022-05-27 오전 11 20 44" src="https://user-images.githubusercontent.com/24292848/170615900-dc75e44b-7657-42ba-9787-a00964f3a369.png">
 

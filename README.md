@@ -119,5 +119,8 @@ $$ 3.\ \phi \leftarrow \phi - \alpha \Sigma_i {dQ \over d\phi} (s_i , a_i) (Q_\p
 $$ 4. update \ \theta $$
 
 ## PPO
- 
+
+we don't have to use Q function approximization. because V function and policy loss function share parameter $ \theta $
+
+
 $$ L_t^{CLIP + VF + S} (\theta) = \hat{E_t} (L_t^{CLIP} (\theta) - c_1L_t^{VF}(\theta) + c_2S [\pi_\theta] (s_t)) $$

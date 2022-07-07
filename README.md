@@ -1,7 +1,7 @@
 ## Requirements
 
-* Python > 3.6 
-* Pytorch
+* Python >= 3.8 
+* Pytorch >= 1.12.0
 * Numpy
 
 * * *

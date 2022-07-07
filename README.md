@@ -15,7 +15,7 @@
 
 * * *
 
-## Implement principle
+## Easy explained algorithm principle
 
 > [policy gradient](https://github.com/kkugosu/RL_BASIC/blob/master/docs/pg.md)
 >

@@ -1,6 +1,12 @@
+## Requirements
+
+* Python > 3.6 
+* Pytorch
+* Numpy
+
 * * *
 
-implement principle
+## implement principle
 
 > [policy gradient](https://github.com/kkugosu/RL_BASIC/blob/master/docs/pg.md)
 >

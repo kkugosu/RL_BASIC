@@ -1,5 +1,7 @@
 ## Requirements
 
+* Gym
+* Mujoco
 * Python >= 3.8 
 * Pytorch >= 1.12.0
 * Numpy

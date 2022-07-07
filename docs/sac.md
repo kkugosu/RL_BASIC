@@ -1,4 +1,4 @@
-$$\nabla_\phi j_\pi (\phi) = \nabla_\phi log \pi_\phi (a_t | s_t) + (\nabla_{at}log \pi_\phi (a_t | s_t) - 
+$$\nabla_\phi J_\pi (\phi) = \nabla_\phi log \pi_\phi (a_t | s_t) + (\nabla_{at}log \pi_\phi (a_t | s_t) - 
 \nabla_{at} Q(s_t,a_t))\nabla_\phi f_\phi (\epsilon_t ; s_t)$$
 
 $$\nabla_\theta J_Q (\theta) = \nabla_\theta Q_\theta (a_t,s_t)(Q_\theta(s_t,a_t) - r(s_t,a_t) - \gamma V_\psi (s_{t+1}))$$

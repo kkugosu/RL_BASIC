@@ -6,6 +6,8 @@ to improve overall performance, we restrict the amount of update. such as kld wh
 
 below is formula of dV, dQ, d$\pi$
 
+f means reparameterization trick
+
 $$\nabla_\phi J_\pi (\phi) = \nabla_\phi log \pi_\phi (a_t | s_t) + (\nabla_{at}log \pi_\phi (a_t | s_t) - 
 \nabla_{at} Q(s_t,a_t))\nabla_\phi f_\phi (\epsilon_t ; s_t)$$
 

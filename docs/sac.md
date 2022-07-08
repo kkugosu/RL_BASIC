@@ -1,3 +1,6 @@
+in sac, we add entropy term to reward so that policy follows boltzmann distribution.
+by adding entropy term, algorithm become more robust to distributional shift problem, but not perfectly prevent.
+
 $$\nabla_\phi J_\pi (\phi) = \nabla_\phi log \pi_\phi (a_t | s_t) + (\nabla_{at}log \pi_\phi (a_t | s_t) - 
 \nabla_{at} Q(s_t,a_t))\nabla_\phi f_\phi (\epsilon_t ; s_t)$$
 

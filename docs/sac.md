@@ -1,6 +1,9 @@
 in sac, we add entropy term to reward so that policy follows boltzmann distribution.
 by adding entropy term, algorithm become more robust to distributional shift problem, but not perfectly prevent.
 
+this algorithm guarantee improvement of Q function but improvement of Q function is not always improve overall performance.
+to improve overall performance, we restrict the amount of update. such as kld which is used in trpo.
+
 $$\nabla_\phi J_\pi (\phi) = \nabla_\phi log \pi_\phi (a_t | s_t) + (\nabla_{at}log \pi_\phi (a_t | s_t) - 
 \nabla_{at} Q(s_t,a_t))\nabla_\phi f_\phi (\epsilon_t ; s_t)$$
 

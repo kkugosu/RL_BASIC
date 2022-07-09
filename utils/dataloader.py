@@ -4,7 +4,7 @@ import random
 
 class CustomDataLoader:
 
-    def __init__(self, dataset, batch_size, suffle):
+    def __init__(self, dataset, batch_size, suffle = False):
         self.dataset = dataset
         self.batch_size = batch_size
         self.num_category = len(self.dataset[0])

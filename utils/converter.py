@@ -3,11 +3,11 @@ import numpy as np
 
 
 class Converter:
-    def __init__(self, env):
-        self.env = env
+    def __init__(self, envname):
+        self.envname = envname
 
     def index2act(self, _input, batch):
-        if self.env == "hope":
+        if self.envname == "hope":
             if batch == 1:
                 first_action = (_input % 5 / 2) - 1
                 sec_action = ((_input % 25 - _input % 5) / 10) - 1
@@ -23,13 +23,13 @@ class Converter:
                     out[i] = np.array([first_action, sec_action, third_action])
                     i = i + 1
             return out
-        elif self.env == "cart":
+        elif self.envname == "cart":
             return _input
         else:
             print("converter error")
 
     def act2index(self, _input, batch):
-        if self.env == "hope":
+        if self.envname == "hope":
             if batch == 1:
                 _input = _input + 1
                 _input = _input * 2
@@ -43,15 +43,15 @@ class Converter:
                     out[i] = _input[i][2] * 25 + _input[i][1] * 5 + _input[i][0]
                     i = i + 1
             return out
-        elif self.env == "cart":
+        elif self.envname == "cart":
             return _input
         else:
             print("converter error")
 
     def rand_act(self):
-        if self.env == "hope":
+        if self.envname == "hope":
             return (np.random.randint(5, size=3) - 2)/2
-        elif self.env == "cart":
+        elif self.envname == "cart":
             return np.random.randint(2)
         else:
             print("converter error")

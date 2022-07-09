@@ -21,8 +21,7 @@ class Simulate:
             pre_observation = torch.tensor(pre_observation, device=device, dtype=torch.float32)
             t = 0
             while t < memory_capacity - total_num: #if pg, gain accumulate
-                print(t)
-                action = self.policy(pre_observation)
+                action = self.policy.select_action(pre_observation)
                 observation, reward, done, info = self.env.step(action)
                 np_pre_observation = pre_observation.cpu().numpy()
                 dataset.push(np_pre_observation, action, observation, reward, np.float32(done))

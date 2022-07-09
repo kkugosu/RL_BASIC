@@ -3,7 +3,6 @@
 * cartpole
 * hopper
 
-* * *
 
 ## Requirements
 
@@ -13,7 +12,6 @@
 * Pytorch >= 1.12.0
 * Numpy
 
-* * *
 
 ## Easy explained algorithm principle
 
@@ -30,3 +28,8 @@
 > [proximal policy optimization](https://github.com/kkugosu/RL_BASIC/blob/master/docs/ppo.md)
 >
 > [soft actor critic](https://github.com/kkugosu/RL_BASIC/blob/master/docs/sac.md)
+
+## REPO
+papers
+cs285
+hui blog

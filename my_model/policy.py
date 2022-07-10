@@ -13,24 +13,25 @@ class Policy:
         self.envname = envname
         self.converter = converter.Converter(self.envname)
 
-    def select_action(self, pre_observation):
+    def select_action(self, n_p_o):
+        t_p_o = torch.tensor(n_p_o, device=device, dtype=torch.float32)
         if self.policy == "DQN":
             if random.random() < 0.9:
                 with torch.no_grad():
-                    basedqn_action = self.model(pre_observation)
-                max_action = np.argmax(basedqn_action.cpu().numpy())
-                action = self.converter.index2act(max_action, 1)
+                    t_p_qsa = self.model(t_p_o)
+                n_a_index = np.argmax(t_p_qsa.cpu().numpy())
+                n_a = self.converter.index2act(n_a_index, 1)
             else:
-                action = self.converter.rand_act()
-            return action
+                n_a = self.converter.rand_act()
+            return n_a
 
         elif self.policy == "PG":
             with torch.no_grad():
-                basedqn_action = self.model(pre_observation)
-            my_action = torch.multinomial(basedqn_action, 1)
-            my_action.cpu().numpy()
-            action = self.converter.index2act(my_action, 1)
-            return action
+                t_p_qsa = self.model(t_p_o)
+            t_a_index = torch.multinomial(t_p_qsa.exp(), 1)
+            n_a_index = t_a_index.cpu().numpy()
+            n_a = self.converter.index2act(n_a_index, 1)
+            return n_a
 
         else:
             print("model name error")

@@ -17,18 +17,15 @@ class Simulate:
         pause = 0
         memory_capacity = capacity
         while total_num < memory_capacity - pause:
-            pre_observation = self.env.reset()
-            pre_observation = torch.tensor(pre_observation, device=device, dtype=torch.float32)
+            n_p_o = self.env.reset()
             t = 0
             while t < memory_capacity - total_num: #if pg, gain accumulate
-                action = self.policy.select_action(pre_observation)
-                observation, reward, done, info = self.env.step(action)
-                np_pre_observation = pre_observation.cpu().numpy()
-                dataset.push(np_pre_observation, action, observation, reward, np.float32(done))
-
-                pre_observation = torch.tensor(observation, device=device, dtype=torch.float32)
+                n_a = self.policy.select_action(n_p_o)
+                n_o, n_r, n_d, n_i = self.env.step(n_a)
+                dataset.push(n_p_o, n_a, n_o, n_r, np.float32(n_d))
+                n_p_o = n_o
                 t = t + 1
-                if done:
+                if n_d:
                     total_num += t
                     t = 0
                     break

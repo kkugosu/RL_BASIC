@@ -21,6 +21,7 @@ class Simulate:
             t = 0
             while t < memory_capacity - total_num: #if pg, gain accumulate
                 n_a = self.policy.select_action(n_p_o)
+
                 n_o, n_r, n_d, n_i = self.env.step(n_a)
                 dataset.push(n_p_o, n_a, n_o, n_r, np.float32(n_d))
                 n_p_o = n_o
@@ -75,30 +76,4 @@ class RewardConverter:
                          reward[global_index], np.float32(done[global_index]))
             global_index += 1
         return dataset
-
-
-
-'''
-    def rendering(self, forwardstep):
-
-        pre_observation = self.env.reset()
-        pre_observation = torch.tensor(pre_observation, device=device, dtype=torch.float32)
-        total_num = 0
-        t = 0
-        while t < forwardstep - total_num:
-            with torch.no_grad():
-                basedqn_action = self.model(pre_observation)
-            max_action = np.argmax(basedqn_action.cpu().numpy())
-            action = self.converter.index2act(max_action, 1)
-            observation, reward, done, info = self.env.step(action)
-            pre_observation = torch.tensor(observation, device=device, dtype=torch.float32)
-            self.env.render()
-            t = t + 1
-            if done:
-                print("Episode finished after {} timesteps".format(t+1))
-                total_num += t
-                t = 0
-                break
-'''
-
 

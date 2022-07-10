@@ -14,7 +14,7 @@ class Train:
         self.model_name = model_name
         self.softmax = nn.Softmax(dim=-1)
 
-    def training(self, iteration, batch_size, *model, optimizer):
+    def training(self, iteration, batch_size, optimizer, *model):
         GAMMA = 0.999
         i = 0
         loss = None
@@ -45,7 +45,7 @@ class Train:
                     param.grad.data.clamp_(-1, 1)
                 optimizer.step()
                 i = i + 1
-                print("loss = ", loss)
+            print("loss = ", loss)
 
         elif self.model_name == "PG":
             upd_model = model[0]

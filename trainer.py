@@ -36,7 +36,7 @@ class Train:
                 criterion = nn.MSELoss()
                 with torch.no_grad():
                     t_p_qsa_ = base_model(t_o)
-                    t_p_qsa_ = torch.max(t_p_qsa_, dim=1)*GAMMA
+                    t_p_qsa_ = torch.max(t_p_qsa_, dim=1)[0]*GAMMA
                     t_p_qsa_ = t_p_qsa_ + t_r
                 loss = criterion(t_p_qsa, t_p_qsa_.unsqueeze(axis=-1))
                 optimizer.zero_grad()
@@ -51,7 +51,7 @@ class Train:
             upd_model = model[0]
             while i < iteration:
                 # print(i)
-                n_p_o, n_a, n_o, n_r, n_d  = next(iter(self.data_loader))
+                n_p_o, n_a, n_o, n_r, n_d = next(iter(self.data_loader))
                 n_a_index = self.converter.act2index(n_a, batch_size).astype(np.int64)
                 t_a_index = torch.from_numpy(n_a_index).to(device).unsqueeze(axis=-1)
                 t_p_o = torch.tensor(n_p_o, dtype=torch.float32).to(device)

@@ -1,4 +1,4 @@
-from base import BasePolicy
+from control.base import BasePolicy
 
 
 class PGPolicy(BasePolicy):

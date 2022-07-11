@@ -10,8 +10,10 @@ from utils import dataset, dataloader, buffer
 import trainer
 import random
 import torch.onnx as onnx
+from utils import converter
 from torch.utils.tensorboard import SummaryWriter
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
+GAMMA = 0.999
 
 
 class PGPolicy(BasePolicy):
@@ -27,16 +29,43 @@ class PGPolicy(BasePolicy):
         self.train = trainer.Train(self.env_n, self.dataloader, self.cont)
         self.optimizer = torch.optim.SGD(self.updatedPG.parameters(), lr=self.lr)
         self.writer = SummaryWriter('RLresult/' + self.env_n + '/' + self.cont)
+        self.converter = converter.Converter(self.env_n)
+        self.softmax = nn.Softmax(dim=-1)
 
     def training(self):
         i = 0
         while i < self.t_i:
             i = i + 1
             self.buffer.renewal_memory(self.ca, self.data)
-            loss = self.train.training(self.t_i, self.b_s, self.optimizer, self.updatedPG)
+            loss = self.train_per_buff(self.t_i, self.b_s, self.optimizer, self.updatedPG)
             self.writer.add_scalar("loss", loss, i)
             torch.save(self.updatedPG.state_dict(), self.PARAM_PATH_TEST)
 
         self.env.close()
         self.writer.flush()
         self.writer.close()
+
+    def train_per_buff(self, iteration, batch_size, optimizer, upd_model):
+        i = 0
+        while i < iteration:
+            # print(i)
+            n_p_o, n_a, n_o, n_r, n_d = next(iter(self.dataloader))
+            n_a_index = self.converter.act2index(n_a, batch_size).astype(np.int64)
+            t_a_index = torch.from_numpy(n_a_index).to(device).unsqueeze(axis=-1)
+            t_p_o = torch.tensor(n_p_o, dtype=torch.float32).to(device)
+            t_r = torch.tensor(n_r, dtype=torch.float32).to(device)
+            t_p_o_softmax = self.softmax(upd_model(t_p_o))
+            state_action_values = torch.gather(upd_model(t_p_o_softmax), 1, t_a_index)
+            weight = torch.log(state_action_values)
+            loss = -weight * t_r
+            print("wait")
+            optimizer.zero_grad()
+            loss.backward()
+            for param in upd_model.parameters():
+                param.grad.data.clamp_(-1, 1)
+            optimizer.step()
+            i = i + 1
+            print("loss = ", loss)
+
+        return loss
+

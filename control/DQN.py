@@ -27,7 +27,7 @@ class DQNPolicy(BasePolicy):
         self.train = trainer.Train(self.env_n, self.dataloader, self.cont)
         self.optimizer = torch.optim.SGD(self.updatedDQN.parameters(), lr=self.lr)
         self.converter = converter.Converter(self.env_n)
-        self.writer = SummaryWriter('RLresult/' + self.env_n + '/' + self.cont)
+        self.writer = SummaryWriter('Result/' + self.env_n + '/' + self.cont)
 
     def training(self):
         i = 0

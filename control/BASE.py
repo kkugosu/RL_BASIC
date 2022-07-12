@@ -1,4 +1,7 @@
 import gym
+from torch.utils.tensorboard import SummaryWriter
+from utils import converter
+from utils import dataset, dataloader
 HOP_ACTION = 125
 CART_ACTION = 2
 
@@ -53,3 +56,8 @@ class BasePolicy:
         else:
             self.a_s = HOP_ACTION
         print("ACTION_SIZE(output) = ", self.a_s)
+        
+        self.data = dataset.SimData(capacity=self.ca)
+        self.dataloader = dataloader.CustomDataLoader(self.data, batch_size=self.b_s)
+        self.converter = converter.Converter(self.env_n)
+        self.writer = SummaryWriter('Result/' + self.env_n + '/' + self.cont)

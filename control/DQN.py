@@ -1,36 +1,32 @@
-from control.base import BasePolicy
+from control import BASE, policy
 import torch
-from my_model import Network, policy
-from utils import dataset, dataloader, buffer
-import trainer
+from NeuralNetwork import NN
+from utils import buffer
 from torch import nn
-from torch.utils.tensorboard import SummaryWriter
-from utils import converter
+
+
 import numpy as np
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 GAMMA = 0.999
 
 
-class DQNPolicy(BasePolicy):
+class DQNPolicy(BASE.BasePolicy):
     def __init__(self, *args) -> None:
         super().__init__(*args)
-        self.updatedDQN = Network.SimpleNN(self.o_s, self.h_s, self.a_s).to(device)
-        self.baseDQN = Network.SimpleNN(self.o_s, self.h_s, self.a_s).to(device)
-        self.updatedDQN.load_state_dict(torch.load(self.PARAM_PATH_TEST))
-        self.baseDQN.load_state_dict(self.updatedDQN.state_dict())
+        self.updatedDQN = NN.SimpleNN(self.o_s, self.h_s, self.a_s).to(device)
+        self.baseDQN = NN.SimpleNN(self.o_s, self.h_s, self.a_s).to(device)
         self.baseDQN.eval()
         self.policy = policy.Policy(self.cont, self.baseDQN, self.env_n)
         self.buffer = buffer.Simulate(self.env, self.policy)
-        self.data = dataset.SimData(capacity=self.ca)
         self.buffer.renewal_memory(self.ca, self.data)
-        self.dataloader = dataloader.CustomDataLoader(self.data, batch_size=self.b_s)
-        self.train = trainer.Train(self.env_n, self.dataloader, self.cont)
         self.optimizer = torch.optim.SGD(self.updatedDQN.parameters(), lr=self.lr)
-        self.converter = converter.Converter(self.env_n)
-        self.writer = SummaryWriter('Result/' + self.env_n + '/' + self.cont)
 
     def training(self):
         i = 0
+        try:
+            self.updatedDQN.load_state_dict(torch.load(self.PARAM_PATH_TEST))
+        except:
+            pass
         while i < self.t_i:
             i = i + 1
             self.buffer.renewal_memory(self.ca, self.data)

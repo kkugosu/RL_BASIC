@@ -1,35 +1,27 @@
-from control.base import BasePolicy
+from control import BASE, policy
 import gym
 import torch
 import numpy as np
 import sys
 from torchvision.transforms import ToTensor, Lambda
 from torch import nn
-from my_model import Network, policy
-from utils import dataset, dataloader, buffer
-import trainer
+from NeuralNetwork import NN
+from utils import buffer
 import random
 import torch.onnx as onnx
-from utils import converter
-from torch.utils.tensorboard import SummaryWriter
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 GAMMA = 0.999
 
 
-class PGPolicy(BasePolicy):
+class PGPolicy(BASE.BasePolicy):
     def __init__(self, *args) -> None:
         super().__init__(*args)
-        self.updatedPG = Network.SimpleNN(self.o_s, self.h_s, self.a_s).to(device)
+        self.updatedPG = NN.SimpleNN(self.o_s, self.h_s, self.a_s).to(device)
         self.updatedPG.load_state_dict(torch.load(self.PARAM_PATH_TEST))
         self.policy = policy.Policy(self.cont, self.updatedPG, self.env_n)
         self.buffer = buffer.Simulate(self.env, self.policy)
-        self.data = dataset.SimData(capacity=self.ca)
         self.buffer.renewal_memory(self.ca, self.data)
-        self.dataloader = dataloader.CustomDataLoader(self.data, batch_size=self.b_s)
-        self.train = trainer.Train(self.env_n, self.dataloader, self.cont)
         self.optimizer = torch.optim.SGD(self.updatedPG.parameters(), lr=self.lr)
-        self.writer = SummaryWriter('Result/' + self.env_n + '/' + self.cont)
-        self.converter = converter.Converter(self.env_n)
         self.softmax = nn.Softmax(dim=-1)
 
     def training(self):

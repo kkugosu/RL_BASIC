@@ -17,7 +17,6 @@ class PGPolicy(BASE.BasePolicy):
     def __init__(self, *args) -> None:
         super().__init__(*args)
         self.updatedPG = NN.SimpleNN(self.o_s, self.h_s, self.a_s).to(device)
-        self.updatedPG.load_state_dict(torch.load(self.PARAM_PATH_TEST))
         self.policy = policy.Policy(self.cont, self.updatedPG, self.env_n)
         self.buffer = buffer.Simulate(self.env, self.policy)
         self.buffer.renewal_memory(self.ca, self.data)
@@ -25,6 +24,10 @@ class PGPolicy(BASE.BasePolicy):
         self.softmax = nn.Softmax(dim=-1)
 
     def training(self):
+        try:
+            self.updatedPG.load_state_dict(torch.load(self.PARAM_PATH_TEST))
+        except:
+            pass
         i = 0
         while i < self.t_i:
             i = i + 1

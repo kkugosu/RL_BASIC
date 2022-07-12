@@ -28,7 +28,7 @@ class PGPolicy(BasePolicy):
         self.dataloader = dataloader.CustomDataLoader(self.data, batch_size=self.b_s)
         self.train = trainer.Train(self.env_n, self.dataloader, self.cont)
         self.optimizer = torch.optim.SGD(self.updatedPG.parameters(), lr=self.lr)
-        self.writer = SummaryWriter('RLresult/' + self.env_n + '/' + self.cont)
+        self.writer = SummaryWriter('Result/' + self.env_n + '/' + self.cont)
         self.converter = converter.Converter(self.env_n)
         self.softmax = nn.Softmax(dim=-1)
 

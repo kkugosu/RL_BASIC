@@ -13,26 +13,26 @@ GAMMA = 0.999
 class DQNPolicy(BASE.BasePolicy):
     def __init__(self, *args) -> None:
         super().__init__(*args)
-        self.updatedDQN = NN.SimpleNN(self.o_s, self.h_s, self.a_s).to(device)
+        self.MainNetwork = NN.SimpleNN(self.o_s, self.h_s, self.a_s).to(device)
         self.baseDQN = NN.SimpleNN(self.o_s, self.h_s, self.a_s).to(device)
         self.baseDQN.eval()
         self.policy = policy.Policy(self.cont, self.baseDQN, self.env_n)
         self.buffer = buffer.Simulate(self.env, self.policy, step_size=1)
-        self.optimizer = torch.optim.SGD(self.updatedDQN.parameters(), lr=self.lr)
+        self.optimizer = torch.optim.SGD(self.MainNetwork.parameters(), lr=self.lr)
 
     def training(self):
         i = 0
         try:
-            self.updatedDQN.load_state_dict(torch.load(self.PARAM_PATH_TEST))
+            self.MainNetwork.load_state_dict(torch.load(self.PARAM_PATH_TEST))
         except:
             pass
         while i < self.t_i:
             i = i + 1
             self.buffer.renewal_memory(self.ca, self.data, self.dataloader)
-            loss = self.train_per_buf(self.t_i, self.b_s, self.optimizer, self.updatedDQN, self.baseDQN)
+            loss = self.train_per_buf(self.t_i, self.b_s, self.optimizer, self.MainNetwork, self.baseDQN)
             self.writer.add_scalar("loss", loss, i)
-            torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH_TEST)
-            self.baseDQN.load_state_dict(self.updatedDQN.state_dict())
+            torch.save(self.MainNetwork.state_dict(), self.PARAM_PATH_TEST)
+            self.baseDQN.load_state_dict(self.MainNetwork.state_dict())
             self.baseDQN.eval()
 
         self.env.close()

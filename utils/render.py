@@ -1,33 +1,31 @@
 import torch
 import random
 import numpy as np
+from NeuralNetwork import NN
+from control import BASE, policy
 from utils import converter
+from control import policy
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 # self.converter = converter.Converter(self.envname)
 
 
-
-
-def rendering(self, forwardstep):
-
-    pre_observation = self.env.reset()
-    pre_observation = torch.tensor(pre_observation, device=device, dtype=torch.float32)
-    total_num = 0
-    t = 0
-    while t < forwardstep - total_num:
-        with torch.no_grad():
-            basedqn_action = self.model(pre_observation)
-        max_action = np.argmax(basedqn_action.cpu().numpy())
-        action = self.converter.index2act(max_action, 1)
-        observation, reward, done, info = self.env.step(action)
-        pre_observation = torch.tensor(observation, device=device, dtype=torch.float32)
-        self.env.render()
-        t = t + 1
-        if done:
-            print("Episode finished after {} timesteps".format(t+1))
-            total_num += t
-            t = 0
-            break
+class Render(BASE.BasePolicy):
+    def __init__(self, *args):
+        super().__init__(*args)
+        self.MainNetwork = NN.SimpleNN(self.o_s, self.h_s, self.a_s).to(device)
+        self.MainNetwork.load_state_dict(torch.load(self.PARAM_PATH_TEST))
+        self.policy = policy.Policy(self.cont, self.MainNetwork, self.env_n)
+        n_p_o = self.env.reset()
+        t = 0
+        while t < 100:
+            n_a = self.policy.select_action(n_p_o)
+            n_o, n_r, n_d, info = self.env.step(n_a)
+            n_p_o = n_o
+            self.env.render()
+            t = t + 1
+            if done:
+                print("Episode finished after {} timesteps".format(t+1))
+                break
 
 
 

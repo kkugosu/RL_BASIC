@@ -8,11 +8,12 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 class Simulate:
 
-    def __init__(self, env, policy):
+    def __init__(self, env, policy, step_size):
         self.env = env
         self.policy = policy
+        self.step_size = step_size
 
-    def renewal_memory(self, capacity, dataset):
+    def renewal_memory(self, capacity, dataset, dataloader):
         total_num = 0
         pause = 0
         memory_capacity = capacity
@@ -31,16 +32,11 @@ class Simulate:
                     t = 0
                     break
             pause = t
+        self._reward_converter(dataset, dataloader)
 
-class RewardConverter:
-
-    def __init__(self, step_size, dataloader):
-        self.step_size = step_size
-        self.dataloader = dataloader
-
-    def reward_converter(self, dataset):
+    def _reward_converter(self, dataset, dataloader):
         t = 0
-        pre_observation, action, observation, reward, done = next(iter(self.dataloader))
+        pre_observation, action, observation, reward, done = next(iter(dataloader))
         # cal per trajectary to_end length ex) 4 3 2 1 6 5 4 3 2 1
         # set step to upper bound ex) step = 5 ->  4 3 2 1 5 5 4 3 2 1
         global_index = len(done) - 1
@@ -72,7 +68,7 @@ class RewardConverter:
             global_index += 1
         global_index = 0
         while global_index < len(done):
-            dataset.push(np_pre_observation[global_index], action[global_index], observation[global_index],
+            dataset.push(pre_observation[global_index], action[global_index], observation[global_index],
                          reward[global_index], np.float32(done[global_index]))
             global_index += 1
         return dataset

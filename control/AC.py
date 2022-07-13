@@ -10,20 +10,23 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 GAMMA = 0.999
 
 
-class DQNPolicy(BASE.BasePolicy):
-    def __init__(self, *args) -> None:
+class ACPolicy(BASE.BasePolicy):
+    def __init__(self, step_size, *args) -> None:
         super().__init__(*args)
+        self.step_size = step_size
+        self.updatedPG = NN.SimpleNN(self.o_s, self.h_s, self.a_s).to(device)
         self.updatedDQN = NN.SimpleNN(self.o_s, self.h_s, self.a_s).to(device)
         self.baseDQN = NN.SimpleNN(self.o_s, self.h_s, self.a_s).to(device)
         self.baseDQN.eval()
         self.policy = policy.Policy(self.cont, self.baseDQN, self.env_n)
-        self.buffer = buffer.Simulate(self.env, self.policy, step_size=1)
+        self.buffer = buffer.Simulate(self.env, self.policy, step_size=4)
         self.optimizer = torch.optim.SGD(self.updatedDQN.parameters(), lr=self.lr)
 
     def training(self):
         i = 0
         try:
             self.updatedDQN.load_state_dict(torch.load(self.PARAM_PATH_TEST))
+            self.updatedPG.load_state_dict(torch.load(self.PARAM_PATH_TEST))
         except:
             pass
         while i < self.t_i:

@@ -25,7 +25,7 @@ class Policy:
                 n_a = self.converter.rand_act()
             return n_a
 
-        elif self.policy == "PG":
+        elif (self.policy == "PG") | (self.policy == "AC"):
             with torch.no_grad():
                 t_p_qsa = self.model(t_p_o)
             t_a_index = torch.multinomial(t_p_qsa.exp(), 1)

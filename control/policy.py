@@ -33,6 +33,11 @@ class Policy:
             n_a = self.converter.index2act(n_a_index, 1)
             return n_a
 
+        elif self.policy == "DDPG":
+            t_a = self.model(t_p_o)
+            n_a = t_a.cpu().numpy()
+            return n_a
+        
         else:
             print("model name error")
             return None

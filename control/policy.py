@@ -3,7 +3,6 @@ import random
 import numpy as np
 from utils import converter
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-#
 
 
 class Policy:
@@ -25,7 +24,11 @@ class Policy:
                 n_a = self.converter.rand_act()
             return n_a
 
-        elif (self.policy == "PG") | (self.policy == "AC"):
+        elif ((self.policy == "PG")
+              | (self.policy == "AC")
+              | (self.policy == "TRPO")
+              | (self.policy == "PPO")
+              | (self.policy == "SAC")):
             with torch.no_grad():
                 t_p_qsa = self.model(t_p_o)
             t_a_index = torch.multinomial(t_p_qsa.exp(), 1)
@@ -37,7 +40,7 @@ class Policy:
             t_a = self.model(t_p_o)
             n_a = t_a.cpu().numpy()
             return n_a
-        
+
         else:
             print("model name error")
             return None

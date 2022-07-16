@@ -17,13 +17,13 @@ class Render(BASE.BasePolicy):
         self.policy = policy.Policy(self.cont, self.MainNetwork, self.env_n)
         n_p_o = self.env.reset()
         t = 0
-        while t < 100:
+        while t < 1000:
             n_a = self.policy.select_action(n_p_o)
             n_o, n_r, n_d, info = self.env.step(n_a)
             n_p_o = n_o
             self.env.render()
             t = t + 1
-            if done:
+            if n_d:
                 print("Episode finished after {} timesteps".format(t+1))
                 break
 

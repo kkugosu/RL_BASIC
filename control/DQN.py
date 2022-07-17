@@ -15,16 +15,17 @@ class DQNPolicy(BASE.BasePolicy):
         super().__init__(*args)
         self.MainNetwork = NN.SimpleNN(self.o_s, self.h_s, self.a_s).to(device)
         self.baseDQN = NN.SimpleNN(self.o_s, self.h_s, self.a_s).to(device)
-
+        self.baseDQN.eval()
         self.policy = policy.Policy(self.cont, self.MainNetwork, self.env_n)
         self.buffer = buffer.Simulate(self.env, self.policy, step_size=1)
         self.optimizer = torch.optim.SGD(self.MainNetwork.parameters(), lr=self.lr)
 
-    def training(self, load=False):
+    def training(self, load=int(0)):
         i = 0
-        if load:
+        if int(load) == 1:
+            print("loading")
             self.MainNetwork.load_state_dict(torch.load(self.PARAM_PATH))
-
+            print("loading complete")
         else:
             pass
         while i < 10*self.t_i:
@@ -35,6 +36,7 @@ class DQNPolicy(BASE.BasePolicy):
             self.writer.add_scalar("loss", loss, i)
             torch.save(self.MainNetwork.state_dict(), self.PARAM_PATH)
             self.baseDQN.load_state_dict(self.MainNetwork.state_dict())
+            self.baseDQN.eval()
 
         self.env.close()
         self.writer.flush()

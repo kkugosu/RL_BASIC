@@ -76,7 +76,7 @@ if __name__ == "__main__":
     print("enter learning rate")
     learning_rate = getfloat(learning_rate)
 
-    print("load")
+    print("load enter 0 or 1")
     load_ = input("->")
 
     if control == PG:

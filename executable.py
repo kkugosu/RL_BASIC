@@ -77,17 +77,17 @@ if __name__ == "__main__":
     learning_rate = getfloat(learning_rate)
 
     print("load")
-    load = input("->")
+    load_ = input("->")
 
     if control == PG:
         mechanism = PG.PGPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
                                 learning_rate, TRAIN_ITER, control, envname)
-        mechanism.training(load)
+        mechanism.training(load=load_)
 
     else:
         mechanism = DQN.DQNPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
                                   learning_rate, TRAIN_ITER, control, envname)
-        mechanism.training(load)
+        mechanism.training(load=load_)
 
     render.Render(BATCH_SIZE, CAPACITY, HIDDEN_SIZE, learning_rate, TRAIN_ITER, control, envname)
 

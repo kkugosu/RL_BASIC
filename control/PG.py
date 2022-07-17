@@ -22,10 +22,10 @@ class PGPolicy(BASE.BasePolicy):
         self.optimizer = torch.optim.SGD(self.updatedPG.parameters(), lr=self.lr)
         self.softmax = nn.Softmax(dim=-1)
 
-    def training(self):
-        try:
-            self.updatedPG.load_state_dict(torch.load(self.PARAM_PATH_TEST))
-        except:
+    def training(self, load=False):
+        if load:
+            self.updatedPG.load_state_dict(torch.load(self.PARAM_PATH))
+        else:
             pass
         i = 0
         while i < self.t_i:
@@ -33,7 +33,7 @@ class PGPolicy(BASE.BasePolicy):
             self.buffer.renewal_memory(self.ca, self.data, self.dataloader)
             loss = self.train_per_buff(self.t_i, self.b_s, self.optimizer, self.updatedPG)
             self.writer.add_scalar("loss", loss, i)
-            torch.save(self.updatedPG.state_dict(), self.PARAM_PATH_TEST)
+            torch.save(self.updatedPG.state_dict(), self.PARAM_PATH)
 
         self.env.close()
         self.writer.flush()

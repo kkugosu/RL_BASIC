@@ -15,25 +15,27 @@ class DQNPolicy(BASE.BasePolicy):
         super().__init__(*args)
         self.MainNetwork = NN.SimpleNN(self.o_s, self.h_s, self.a_s).to(device)
         self.baseDQN = NN.SimpleNN(self.o_s, self.h_s, self.a_s).to(device)
-        self.baseDQN.eval()
-        self.policy = policy.Policy(self.cont, self.baseDQN, self.env_n)
+
+        self.policy = policy.Policy(self.cont, self.MainNetwork, self.env_n)
         self.buffer = buffer.Simulate(self.env, self.policy, step_size=1)
         self.optimizer = torch.optim.SGD(self.MainNetwork.parameters(), lr=self.lr)
 
-    def training(self):
+    def training(self, load=False):
         i = 0
-        try:
-            self.MainNetwork.load_state_dict(torch.load(self.PARAM_PATH_TEST))
-        except:
+        if load:
+            self.MainNetwork.load_state_dict(torch.load(self.PARAM_PATH))
+
+        else:
             pass
-        while i < self.t_i:
+        while i < 10*self.t_i:
             i = i + 1
             self.buffer.renewal_memory(self.ca, self.data, self.dataloader)
             loss = self.train_per_buf(self.t_i, self.b_s, self.optimizer, self.MainNetwork, self.baseDQN)
+
+            print(loss)
             self.writer.add_scalar("loss", loss, i)
-            torch.save(self.MainNetwork.state_dict(), self.PARAM_PATH_TEST)
+            torch.save(self.MainNetwork.state_dict(), self.PARAM_PATH)
             self.baseDQN.load_state_dict(self.MainNetwork.state_dict())
-            self.baseDQN.eval()
 
         self.env.close()
         self.writer.flush()
@@ -44,7 +46,6 @@ class DQNPolicy(BASE.BasePolicy):
         base_model = model[1]
         i = 0
         while i < iteration:
-            # print(i)
             n_p_o, n_a, n_o, n_r, n_d = next(iter(self.dataloader))
             n_a_index = self.converter.act2index(n_a, batch_size).astype(np.int64)
             t_a_index = torch.from_numpy(n_a_index).to(device).unsqueeze(axis=-1)
@@ -64,4 +65,5 @@ class DQNPolicy(BASE.BasePolicy):
                 param.grad.data.clamp_(-1, 1)
             optimizer.step()
             i = i + 1
+
         return loss

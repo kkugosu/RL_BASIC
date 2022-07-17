@@ -1,5 +1,4 @@
 import base64
-
 from varname import nameof
 import gym
 from control import DQN, PG, AC, BASE
@@ -12,14 +11,13 @@ if __name__ == "__main__":
     HIDDEN_SIZE = 32
     learning_rate = 0.01
 
-
     def getinteger(integer):
         valid = 0
         while valid == 0:
             integer = input("->")
             try:
                 int(integer)
-                if float(integer).is_integer() == True:
+                if float(integer).is_integer():
                     valid = 1
                     return int(integer)
                 else:
@@ -78,15 +76,18 @@ if __name__ == "__main__":
     print("enter learning rate")
     learning_rate = getfloat(learning_rate)
 
+    print("load")
+    load = input("->")
+
     if control == PG:
         mechanism = PG.PGPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
                                 learning_rate, TRAIN_ITER, control, envname)
-        mechanism.training()
+        mechanism.training(load)
 
     else:
         mechanism = DQN.DQNPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
                                   learning_rate, TRAIN_ITER, control, envname)
-        mechanism.training()
+        mechanism.training(load)
 
     render.Render(BATCH_SIZE, CAPACITY, HIDDEN_SIZE, learning_rate, TRAIN_ITER, control, envname)
 

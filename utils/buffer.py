@@ -47,7 +47,6 @@ class Simulate:
                 local_index = 1
                 done[global_index] = local_index
                 reward[global_index] -= done_penalty
-                print("reset")
             else:
                 local_index = local_index + 1
                 if local_index > self.step_size:
@@ -58,7 +57,7 @@ class Simulate:
         gamma = 0.9
         global_index = 0
         while global_index < len(done):
-            observation[global_index] = observation[global_index + done[global_index] - 1]
+            observation[global_index] = observation[int(global_index + done[global_index] - 1)]
             # change observation to last step indexed observation state
             local_index = 1
             while local_index < done[global_index]:

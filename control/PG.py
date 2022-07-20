@@ -22,13 +22,16 @@ class PGPolicy(BASE.BasePolicy):
         self.optimizer = torch.optim.SGD(self.updatedPG.parameters(), lr=self.lr)
         self.softmax = nn.Softmax(dim=-1)
 
-    def training(self, load=False):
-        if load:
+    def training(self, load=int(0)):
+
+        if int(load) == 1:
+            print("loading")
             self.updatedPG.load_state_dict(torch.load(self.PARAM_PATH))
+            print("loading complete")
         else:
             pass
         i = 0
-        while i < self.t_i:
+        while i < 10*self.t_i:
             i = i + 1
             self.buffer.renewal_memory(self.ca, self.data, self.dataloader)
             loss = self.train_per_buff(self.t_i, self.b_s, self.optimizer, self.updatedPG)
@@ -48,12 +51,13 @@ class PGPolicy(BASE.BasePolicy):
             t_a_index = torch.from_numpy(n_a_index).to(device).unsqueeze(axis=-1)
             t_p_o = torch.tensor(n_p_o, dtype=torch.float32).to(device)
             t_r = torch.tensor(n_r, dtype=torch.float32).to(device)
-            print("trsh",np.shape(t_r))
+            print("trsh", np.shape(t_r))
             t_p_o_softmax = self.softmax(upd_model(t_p_o))
             state_action_values = torch.gather(upd_model(t_p_o_softmax), 1, t_a_index)
-            print("sa",np.shape(state_action_values))
+            print("sa", np.shape(state_action_values))
             weight = torch.log(state_action_values)
-            loss = -torch.matmul(weight, t_r) #[1,2,3] * [1,2,3] = [1,4,9]
+            loss = -torch.matmul(weight, t_r)
+            # [1,2,3] * [1,2,3] = [1,4,9]
             print("wait")
             optimizer.zero_grad()
             loss.backward()
@@ -64,4 +68,3 @@ class PGPolicy(BASE.BasePolicy):
             print("loss = ", loss)
 
         return loss
-

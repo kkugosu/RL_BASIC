@@ -3,8 +3,6 @@ import torch
 from NeuralNetwork import NN
 from utils import buffer
 from torch import nn
-
-
 import numpy as np
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 GAMMA = 0.999
@@ -21,13 +19,14 @@ class DQNPolicy(BASE.BasePolicy):
         self.optimizer = torch.optim.SGD(self.MainNetwork.parameters(), lr=self.lr)
 
     def training(self, load=int(0)):
-        i = 0
+
         if int(load) == 1:
             print("loading")
             self.MainNetwork.load_state_dict(torch.load(self.PARAM_PATH))
             print("loading complete")
         else:
             pass
+        i = 0
         while i < 10*self.t_i:
             i = i + 1
             self.buffer.renewal_memory(self.ca, self.data, self.dataloader)

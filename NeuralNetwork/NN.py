@@ -15,7 +15,7 @@ class SimpleNN(nn.Module):
             nn.Linear(hidden_size, hidden_size),
             nn.ReLU(),
             nn.Linear(hidden_size, output_size),
-            nn.ReLU()
+
         )
 
     def forward(self, input_element):

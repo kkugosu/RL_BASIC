@@ -52,7 +52,8 @@ class Converter:
         if self.envname == "hope":
             return (np.random.randint(5, size=3) - 2)/2
         elif self.envname == "cart":
-            return np.random.randint(2)
+            a = np.random.randint(2)
+            return np.int64(a)
         else:
             print("converter error")
 

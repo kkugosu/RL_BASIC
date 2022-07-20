@@ -10,7 +10,7 @@ from utils import buffer
 import random
 import torch.onnx as onnx
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-GAMMA = 0.999
+GAMMA = 0.98
 
 
 class PGPolicy(BASE.BasePolicy):

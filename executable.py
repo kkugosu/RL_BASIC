@@ -8,6 +8,8 @@ if __name__ == "__main__":
 
     BATCH_SIZE = 10000
     CAPACITY = 10000
+    TRAIN_ITER = 100
+    MEMORY_ITER = 100
     HIDDEN_SIZE = 32
     learning_rate = 0.01
 
@@ -67,8 +69,11 @@ if __name__ == "__main__":
     print("enter memory capacity")
     CAPACITY = getinteger(CAPACITY)
 
-    TRAIN_ITER = CAPACITY * 10 / BATCH_SIZE
-    print("train iter will be", TRAIN_ITER)
+    print("train iter per memory will be")
+    TRAIN_ITER = getinteger(TRAIN_ITER)
+
+    print("memory reset time will be")
+    MEMORY_ITER = getinteger(MEMORY_ITER)
 
     print("enter HIDDEN_SIZE")
     HIDDEN_SIZE = getinteger(HIDDEN_SIZE)
@@ -86,7 +91,7 @@ if __name__ == "__main__":
 
     else:
         mechanism = DQN.DQNPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
-                                  learning_rate, TRAIN_ITER, control, envname)
+                                  learning_rate, TRAIN_ITER,  control, envname)
         mechanism.training(load=load_)
 
     render.Render(BATCH_SIZE, CAPACITY, HIDDEN_SIZE, learning_rate, TRAIN_ITER, control, envname)

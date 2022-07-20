@@ -5,7 +5,7 @@ from utils import buffer
 from torch import nn
 import numpy as np
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-GAMMA = 0.999
+GAMMA = 0.98
 
 
 class DQNPolicy(BASE.BasePolicy):
@@ -27,7 +27,8 @@ class DQNPolicy(BASE.BasePolicy):
         else:
             pass
         i = 0
-        while i < 10*self.t_i:
+        self.buffer.renewal_memory(self.ca, self.data, self.dataloader)
+        while i < self.t_i:
             i = i + 1
             self.buffer.renewal_memory(self.ca, self.data, self.dataloader)
             loss = self.train_per_buf(self.t_i, self.b_s, self.optimizer, self.MainNetwork, self.baseDQN)
@@ -37,6 +38,10 @@ class DQNPolicy(BASE.BasePolicy):
             self.baseDQN.load_state_dict(self.MainNetwork.state_dict())
             self.baseDQN.eval()
 
+        for p in self.baseDQN.parameters():
+            print(p)
+        for p in self.MainNetwork.parameters():
+            print(p)
         self.env.close()
         self.writer.flush()
         self.writer.close()

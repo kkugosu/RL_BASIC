@@ -51,14 +51,12 @@ class PGPolicy(BASE.BasePolicy):
             t_a_index = torch.from_numpy(n_a_index).to(device).unsqueeze(axis=-1)
             t_p_o = torch.tensor(n_p_o, dtype=torch.float32).to(device)
             t_r = torch.tensor(n_r, dtype=torch.float32).to(device)
-            print("trsh", np.shape(t_r))
+
             t_p_o_softmax = self.softmax(self.updatedPG(t_p_o))
-            state_action_values = torch.gather(self.updatedPG(t_p_o_softmax), 1, t_a_index)
-            print("sa", np.shape(state_action_values))
+            state_action_values = torch.gather(t_p_o_softmax, 1, t_a_index)
             weight = torch.log(state_action_values)
             loss = -torch.matmul(weight, t_r)
             # [1,2,3] * [1,2,3] = [1,4,9]
-            print("wait")
             self.optimizer.zero_grad()
             loss.backward()
             for param in self.updatedPG.parameters():

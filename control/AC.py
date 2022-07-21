@@ -30,8 +30,8 @@ class PGPolicy(BASE.BasePolicy):
 
         if int(load) == 1:
             print("loading")
-            self.updatedPG.load_state_dict(torch.load(self.PARAM_PATH))
-            self.updatedDQN.load_state_dict(torch.load(self.PARAM_PATH))
+            self.updatedPG.load_state_dict(torch.load(self.PARAM_PATH + "/1"))
+            self.updatedDQN.load_state_dict(torch.load(self.PARAM_PATH + "/2"))
             print("loading complete")
         else:
             pass
@@ -41,8 +41,8 @@ class PGPolicy(BASE.BasePolicy):
             self.buffer.renewal_memory(self.ca, self.data, self.dataloader)
             loss = self.train_per_buff()
             self.writer.add_scalar("loss", loss, i)
-            torch.save(self.updatedPG.state_dict(), self.PARAM_PATH)
-            torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH)
+            torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/1")
+            torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/2')
         self.env.close()
         self.writer.flush()
         self.writer.close()
@@ -57,12 +57,11 @@ class PGPolicy(BASE.BasePolicy):
             t_p_o = torch.tensor(n_p_o, dtype=torch.float32).to(device)
             t_r = torch.tensor(n_r, dtype=torch.float32).to(device)
             t_o = torch.tensor(n_o, dtype=torch.float32).to(device)
-            print("trsh", np.shape(t_r))
+
             t_p_o_softmax = self.softmax(self.updatedPG(t_p_o))
-            state_action_values = torch.gather(self.updatedPG(t_p_o_softmax), 1, t_a_index)
+            state_action_values = torch.gather(t_p_o_softmax, 1, t_a_index)
             DQN_weight = torch.gather(self.updatedDQN(t_p_o), 1, t_a_index)
-            print("sa", np.shape(state_action_values))
-            print("dqn", np.shape(DQN_weight))
+
             weight = torch.log(state_action_values)
             pgloss = -DQN_weight*weight
             # [1,2,3] * [1,2,3] = [1,4,9]

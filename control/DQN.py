@@ -46,7 +46,7 @@ class DQNPolicy(BASE.BasePolicy):
         self.writer.flush()
         self.writer.close()
 
-    def train_per_buf(self, *model):
+    def train_per_buf(self):
         upd_model = self.MainNetwork
         base_model = self.baseDQN
         i = 0
@@ -55,9 +55,10 @@ class DQNPolicy(BASE.BasePolicy):
             n_a_index = self.converter.act2index(n_a, self.b_s).astype(np.int64)
             t_a_index = torch.from_numpy(n_a_index).to(device).unsqueeze(axis=-1)
             t_p_o = torch.tensor(n_p_o, dtype=torch.float32).to(device)
-            t_p_qsa = torch.gather(upd_model(t_p_o), 1, t_a_index)
             t_o = torch.tensor(n_o, dtype=torch.float32).to(device)
             t_r = torch.tensor(n_r, dtype=torch.float32).to(device)
+
+            t_p_qsa = torch.gather(upd_model(t_p_o), 1, t_a_index)
             criterion = nn.MSELoss()
             with torch.no_grad():
                 t_p_qsa_ = base_model(t_o)

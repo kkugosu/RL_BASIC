@@ -24,6 +24,7 @@ class BasePolicy:
                  h_s,
                  lr,
                  t_i,
+                 m_i,
                  cont,
                  env_n
                  ):
@@ -32,6 +33,7 @@ class BasePolicy:
         self.h_s = h_s
         self.lr = lr
         self.t_i = t_i
+        self.m_i = m_i
         self.cont = cont
         self.env_n = env_n
 

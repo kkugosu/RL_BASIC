@@ -86,14 +86,14 @@ if __name__ == "__main__":
 
     if control == PG:
         mechanism = PG.PGPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
-                                learning_rate, TRAIN_ITER, control, envname)
+                                learning_rate, TRAIN_ITER, MEMORY_ITER, control, envname)
         mechanism.training(load=load_)
 
     else:
         mechanism = DQN.DQNPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
-                                  learning_rate, TRAIN_ITER,  control, envname)
+                                  learning_rate, TRAIN_ITER, MEMORY_ITER, control, envname)
         mechanism.training(load=load_)
 
-    render.Render(BATCH_SIZE, CAPACITY, HIDDEN_SIZE, learning_rate, TRAIN_ITER, control, envname)
+    render.Render(BATCH_SIZE, CAPACITY, HIDDEN_SIZE, learning_rate, TRAIN_ITER, MEMORY_ITER, control, envname)
 
 

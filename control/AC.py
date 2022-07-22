@@ -9,16 +9,15 @@ from NeuralNetwork import NN
 from utils import buffer
 import random
 import torch.onnx as onnx
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
 GAMMA = 0.98
 
 
 class PGPolicy(BASE.BasePolicy):
     def __init__(self, *args) -> None:
         super().__init__(*args)
-        self.updatedPG = NN.SimpleNN(self.o_s, self.h_s, self.a_s).to(device)
-        self.updatedDQN = NN.SimpleNN(self.o_s, self.h_s, self.a_s).to(device)
-        self.baseDQN = NN.SimpleNN(self.o_s, self.h_s, self.a_s).to(device)
+        self.updatedPG = NN.SimpleNN(self.o_s, self.h_s, self.a_s).to(self.device)
+        self.updatedDQN = NN.SimpleNN(self.o_s, self.h_s, self.a_s).to(self.device)
+        self.baseDQN = NN.SimpleNN(self.o_s, self.h_s, self.a_s).to(self.device)
         self.baseDQN.eval()
         self.policy = policy.Policy(self.cont, self.updatedPG, self.env_n)
         self.buffer = buffer.Simulate(self.env, self.policy, step_size=100)
@@ -53,15 +52,16 @@ class PGPolicy(BASE.BasePolicy):
             # print(i)
             n_p_o, n_a, n_o, n_r, n_d = next(iter(self.dataloader))
             n_a_index = self.converter.act2index(n_a, self.b_s).astype(np.int64)
-            t_a_index = torch.from_numpy(n_a_index).to(device).unsqueeze(axis=-1)
-            t_p_o = torch.tensor(n_p_o, dtype=torch.float32).to(device)
-            t_r = torch.tensor(n_r, dtype=torch.float32).to(device)
-            t_o = torch.tensor(n_o, dtype=torch.float32).to(device)
+            t_a_index = torch.from_numpy(n_a_index).to(self.device).unsqueeze(axis=-1)
+            t_p_o = torch.tensor(n_p_o, dtype=torch.float32).to(self.device)
+            t_r = torch.tensor(n_r, dtype=torch.float32).to(self.device)
+            t_o = torch.tensor(n_o, dtype=torch.float32).to(self.device)
 
             t_p_o_softmax = self.softmax(self.updatedPG(t_p_o))
             state_action_values = torch.gather(t_p_o_softmax, 1, t_a_index)
             DQN_weight = torch.gather(self.updatedDQN(t_p_o), 1, t_a_index)
 
+            criterion = nn.MSELoss()
             weight = torch.log(state_action_values)
             pgloss = -DQN_weight*weight
             # [1,2,3] * [1,2,3] = [1,4,9]
@@ -71,7 +71,7 @@ class PGPolicy(BASE.BasePolicy):
                 DQN_weight = torch.gather(self.baseDQN(t_o), 1, t_a_index)
 
                 t_p_qsa_ = DQN_weight*GAMMA + t_r
-            DQN_loss = DQN_weight - t_p_qsa_
+            DQN_loss = criterion(DQN_weight, t_p_qsa_)
             print("wait")
 
             self.optimizer_p.zero_grad()

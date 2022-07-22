@@ -22,7 +22,6 @@ class Simulate:
             t = 0
             while t < memory_capacity - total_num: #if pg, gain accumulate
                 n_a = self.policy.select_action(n_p_o)
-
                 n_o, n_r, n_d, n_i = self.env.step(n_a)
                 dataset.push(n_p_o, n_a, n_o, n_r, np.float32(n_d))
                 n_p_o = n_o
@@ -55,7 +54,7 @@ class Simulate:
                 done[global_index] = local_index
             global_index = global_index - 1
         # cal newreward per state-action pair
-        gamma = 0.9
+        gamma = 0.98
         global_index = 0
         while global_index < len(done):
             observation[global_index] = observation[int(global_index + done[global_index] - 1)]

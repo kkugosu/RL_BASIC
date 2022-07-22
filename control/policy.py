@@ -18,8 +18,8 @@ class Policy:
             if random.random() < 0.98:
                 with torch.no_grad():
                     t_p_qsa = self.model(t_p_o)
-                n_a_index = np.argmax(t_p_qsa.cpu().numpy())
-                n_a = self.converter.index2act(n_a_index, 1)
+                t_a_index = torch.argmax(t_p_qsa)
+                n_a = self.converter.index2act(t_a_index, 1)
             else:
                 n_a = self.converter.rand_act()
             return n_a
@@ -32,8 +32,7 @@ class Policy:
             with torch.no_grad():
                 t_p_qsa = self.model(t_p_o)
             t_a_index = torch.multinomial(t_p_qsa.exp(), 1)
-            n_a_index = t_a_index.cpu().numpy()[0]
-            n_a = self.converter.index2act(n_a_index, 1)
+            n_a = self.converter.index2act(t_a_index[0], 1)
             return n_a
 
         elif self.policy == "DDPG":

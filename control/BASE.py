@@ -2,6 +2,7 @@ import gym
 from torch.utils.tensorboard import SummaryWriter
 from utils import converter
 from utils import dataset, dataloader
+DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 HOP_ACTION = 125
 CART_ACTION = 2
 
@@ -36,6 +37,7 @@ class BasePolicy:
         self.m_i = m_i
         self.cont = cont
         self.env_n = env_n
+        self.device = DEVICE
 
         self.PARAM_PATH = 'Parameter/' + self.env_n + self.cont + '.pth'
         print("parameter path is " + self.PARAM_PATH)

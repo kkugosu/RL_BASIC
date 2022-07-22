@@ -46,28 +46,24 @@ class DQNPolicy(BASE.BasePolicy):
         self.writer.close()
 
     def train_per_buf(self):
-        upd_model = self.MainNetwork
-        base_model = self.baseDQN
+
         i = 0
         while i < self.m_i:
             n_p_o, n_a, n_o, n_r, n_d = next(iter(self.dataloader))
             t_p_o = torch.tensor(n_p_o, dtype=torch.float32).to(self.device)
-            t_a = torch.tensor(n_a, dtype=torch.float32).to(self.device)
+            t_a_index = self.converter.act2index(n_a, self.b_s).unsqueeze(axis=-1)
             t_o = torch.tensor(n_o, dtype=torch.float32).to(self.device)
             t_r = torch.tensor(n_r, dtype=torch.float32).to(self.device)
-
-            t_a_index = self.converter.act2index(t_a, self.b_s).unsqueeze(axis=-1)
-
-            t_p_qsa = torch.gather(upd_model(t_p_o), 1, t_a_index)
+            t_p_qvalue = torch.gather(self.MainNetwork(t_p_o), 1, t_a_index)
             criterion = nn.MSELoss()
             with torch.no_grad():
-                t_p_qsa_ = base_model(t_o)
-                t_p_qsa_ = torch.max(t_p_qsa_, dim=1)[0] * GAMMA
-                t_p_qsa_ = t_p_qsa_ + t_r
-            loss = criterion(t_p_qsa, t_p_qsa_.unsqueeze(axis=-1))
+                t_qvalue = self.baseDQN(t_o)
+                t_qvalue = torch.max(t_qvalue, dim=1)[0] * GAMMA
+                t_qvalue = t_qvalue + t_r
+            loss = criterion(t_p_qvalue, t_qvalue.unsqueeze(axis=-1))
             self.optimizer.zero_grad()
             loss.backward()
-            for param in upd_model.parameters():
+            for param in self.MainNetwork.parameters():
                 param.grad.data.clamp_(-1, 1)
             self.optimizer.step()
             i = i + 1

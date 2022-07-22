@@ -47,14 +47,13 @@ class PGPolicy(BASE.BasePolicy):
         while i < self.m_i:
             # print(i)
             n_p_o, n_a, n_o, n_r, n_d = next(iter(self.dataloader))
-            n_a_index = self.converter.act2index(n_a, self.b_s).astype(np.int64)
-            t_a_index = torch.from_numpy(n_a_index).to(self.device).unsqueeze(axis=-1)
             t_p_o = torch.tensor(n_p_o, dtype=torch.float32).to(self.device)
+            t_a_index = self.converter.act2index(n_a, self.b_s).unsqueeze(axis=-1)
             t_r = torch.tensor(n_r, dtype=torch.float32).to(self.device)
 
             t_p_o_softmax = self.softmax(self.updatedPG(t_p_o))
-            state_action_values = torch.gather(t_p_o_softmax, 1, t_a_index)
-            weight = torch.log(state_action_values)
+            t_p_weight = torch.gather(t_p_o_softmax, 1, t_a_index)
+            weight = torch.log(t_p_weight)
             loss = -torch.matmul(weight, t_r)
             # [1,2,3] * [1,2,3] = [1,4,9]
             self.optimizer.zero_grad()

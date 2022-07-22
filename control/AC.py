@@ -38,55 +38,59 @@ class PGPolicy(BASE.BasePolicy):
         while i < self.t_i:
             i = i + 1
             self.buffer.renewal_memory(self.ca, self.data, self.dataloader)
-            loss = self.train_per_buff()
-            self.writer.add_scalar("loss", loss, i)
+            pg_loss, dqn_loss = self.train_per_buff()
+            self.writer.add_scalar("pg_loss", pg_loss, i)
+            self.writer.add_scalar("dqn_loss", dqn_loss, i)
             torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/1")
             torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/2')
+
         self.env.close()
         self.writer.flush()
         self.writer.close()
 
     def train_per_buff(self):
         i = 0
+        dqn_loss = None
+        pg_loss = None
         while i < self.m_i:
             # print(i)
             n_p_o, n_a, n_o, n_r, n_d = next(iter(self.dataloader))
-            n_a_index = self.converter.act2index(n_a, self.b_s).astype(np.int64)
-            t_a_index = torch.from_numpy(n_a_index).to(self.device).unsqueeze(axis=-1)
             t_p_o = torch.tensor(n_p_o, dtype=torch.float32).to(self.device)
-            t_r = torch.tensor(n_r, dtype=torch.float32).to(self.device)
+            t_a_index = self.converter.act2index(n_a, self.b_s).unsqueeze(axis=-1)
             t_o = torch.tensor(n_o, dtype=torch.float32).to(self.device)
+            t_r = torch.tensor(n_r, dtype=torch.float32).to(self.device)
 
             t_p_o_softmax = self.softmax(self.updatedPG(t_p_o))
-            state_action_values = torch.gather(t_p_o_softmax, 1, t_a_index)
-            DQN_weight = torch.gather(self.updatedDQN(t_p_o), 1, t_a_index)
+            t_p_weight = torch.gather(t_p_o_softmax, 1, t_a_index)
+            t_p_qvalue = torch.gather(self.updatedDQN(t_p_o), 1, t_a_index)
 
             criterion = nn.MSELoss()
-            weight = torch.log(state_action_values)
-            pgloss = -DQN_weight*weight
+            weight = torch.log(t_p_weight)
+            pg_loss = -t_p_qvalue*weight
             # [1,2,3] * [1,2,3] = [1,4,9]
-            with torch.no_grad():
-                action = self.policy.select_action(n_o)
-                n_a_index = self.converter.act2index(action, self.b_s).astype(np.int64)
-                DQN_weight = torch.gather(self.baseDQN(t_o), 1, t_a_index)
 
-                t_p_qsa_ = DQN_weight*GAMMA + t_r
-            DQN_loss = criterion(DQN_weight, t_p_qsa_)
-            print("wait")
+            with torch.no_grad():
+                n_a = self.policy.select_action(n_o)
+                t_a_index = self.converter.act2index(n_a, self.b_s)
+                t_qvalue = torch.gather(self.baseDQN(t_o), 1, t_a_index)
+
+                t_qvalue = t_qvalue*GAMMA + t_r
+            dqn_loss = criterion(t_p_qvalue, t_qvalue)
 
             self.optimizer_p.zero_grad()
-            pgloss.backward()
+            pg_loss.backward()
             for param in self.updatedPG.parameters():
                 param.grad.data.clamp_(-1, 1)
             self.optimizer_p.step()
 
             self.optimizer_q.zero_grad()
-            DQN_loss.backward()
+            dqn_loss.backward()
             for param in self.updatedDQN.parameters():
                 param.grad.data.clamp_(-1, 1)
             self.optimizer_q.step()
 
             i = i + 1
-            print("loss = ", loss)
+            print("loss1 = ", pg_loss)
+            print("loss2 = ", dqn_loss)
 
-        return loss
+        return pg_loss, dqn_loss

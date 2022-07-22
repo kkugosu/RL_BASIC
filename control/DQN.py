@@ -32,7 +32,7 @@ class DQNPolicy(BASE.BasePolicy):
             self.buffer.renewal_memory(self.ca, self.data, self.dataloader)
             loss = self.train_per_buf()
             print(loss)
-            self.writer.add_scalar("loss", loss, i)
+            self.writer.add_scalar("dqn/loss", loss, i)
             torch.save(self.MainNetwork.state_dict(), self.PARAM_PATH)
             self.baseDQN.load_state_dict(self.MainNetwork.state_dict())
             self.baseDQN.eval()

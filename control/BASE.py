@@ -2,6 +2,7 @@ import gym
 from torch.utils.tensorboard import SummaryWriter
 from utils import converter
 from utils import dataset, dataloader
+import torch
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 HOP_ACTION = 125
 CART_ACTION = 2

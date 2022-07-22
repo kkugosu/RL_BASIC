@@ -39,8 +39,8 @@ class PGPolicy(BASE.BasePolicy):
             i = i + 1
             self.buffer.renewal_memory(self.ca, self.data, self.dataloader)
             pg_loss, dqn_loss = self.train_per_buff()
-            self.writer.add_scalar("pg_loss", pg_loss, i)
-            self.writer.add_scalar("dqn_loss", dqn_loss, i)
+            self.writer.add_scalar("pg/loss", pg_loss, i)
+            self.writer.add_scalar("dqn/loss", dqn_loss, i)
             torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/1")
             torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/2')
 

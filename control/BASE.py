@@ -40,10 +40,10 @@ class BasePolicy:
         self.env_n = env_n
         self.device = DEVICE
 
-        self.PARAM_PATH = 'Parameter/' + self.env_n + self.cont + '.pth'
+        self.PARAM_PATH = 'Parameter/' + self.env_n + self.cont
         print("parameter path is " + self.PARAM_PATH)
 
-        self.PARAM_PATH_TEST = 'Parameter/' + self.env_n + self.cont + '_test.pth'
+        self.PARAM_PATH_TEST = 'Parameter/' + self.env_n + self.cont + '_test'
         print("tmp parameter path is " + self.PARAM_PATH_TEST)
 
         if self.env_n == "cart":

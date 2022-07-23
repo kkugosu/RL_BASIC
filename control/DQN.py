@@ -21,7 +21,7 @@ class DQNPolicy(BASE.BasePolicy):
 
         if int(load) == 1:
             print("loading")
-            self.MainNetwork.load_state_dict(torch.load(self.PARAM_PATH))
+            self.MainNetwork.load_state_dict(torch.load(self.PARAM_PATH + '/1.pth'))
             print("loading complete")
         else:
             pass
@@ -33,7 +33,7 @@ class DQNPolicy(BASE.BasePolicy):
             loss = self.train_per_buf()
             print(loss)
             self.writer.add_scalar("dqn/loss", loss, i)
-            torch.save(self.MainNetwork.state_dict(), self.PARAM_PATH)
+            torch.save(self.MainNetwork.state_dict(), self.PARAM_PATH + '/1.pth')
             self.baseDQN.load_state_dict(self.MainNetwork.state_dict())
             self.baseDQN.eval()
 

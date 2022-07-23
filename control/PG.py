@@ -26,7 +26,7 @@ class PGPolicy(BASE.BasePolicy):
 
         if int(load) == 1:
             print("loading")
-            self.updatedPG.load_state_dict(torch.load(self.PARAM_PATH))
+            self.updatedPG.load_state_dict(torch.load(self.PARAM_PATH + '/1.pth'))
             print("loading complete")
         else:
             pass
@@ -36,7 +36,7 @@ class PGPolicy(BASE.BasePolicy):
             self.buffer.renewal_memory(self.ca, self.data, self.dataloader)
             loss = self.train_per_buff()
             self.writer.add_scalar("pg/loss", loss, i)
-            torch.save(self.updatedPG.state_dict(), self.PARAM_PATH)
+            torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + '/1.pth')
 
         self.env.close()
         self.writer.flush()

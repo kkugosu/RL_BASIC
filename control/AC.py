@@ -29,8 +29,8 @@ class ACPolicy(BASE.BasePolicy):
 
         if int(load) == 1:
             print("loading")
-            self.updatedPG.load_state_dict(torch.load(self.PARAM_PATH + "/1"))
-            self.updatedDQN.load_state_dict(torch.load(self.PARAM_PATH + "/2"))
+            self.updatedPG.load_state_dict(torch.load(self.PARAM_PATH + "/1.pth"))
+            self.updatedDQN.load_state_dict(torch.load(self.PARAM_PATH + "/2.pth"))
             print("loading complete")
         else:
             pass
@@ -41,8 +41,8 @@ class ACPolicy(BASE.BasePolicy):
             pg_loss, dqn_loss = self.train_per_buff()
             self.writer.add_scalar("pg/loss", pg_loss, i)
             self.writer.add_scalar("dqn/loss", dqn_loss, i)
-            torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/1")
-            torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/2')
+            torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/1.pth")
+            torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/2.pth')
 
         self.env.close()
         self.writer.flush()
@@ -80,7 +80,7 @@ class ACPolicy(BASE.BasePolicy):
             dqn_loss = criterion(t_p_qvalue, t_qvalue)
 
             self.optimizer_p.zero_grad()
-            pg_loss.backward()
+            pg_loss.backward(retain_graph=True)
             for param in self.updatedPG.parameters():
                 param.grad.data.clamp_(-1, 1)
             self.optimizer_p.step()

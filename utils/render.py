@@ -13,7 +13,7 @@ class Render(BASE.BasePolicy):
     def __init__(self, *args):
         super().__init__(*args)
         self.MainNetwork = NN.SimpleNN(self.o_s, self.h_s, self.a_s).to(device)
-        self.MainNetwork.load_state_dict(torch.load(self.PARAM_PATH))
+        self.MainNetwork.load_state_dict(torch.load(self.PARAM_PATH + '/1.pth'))
         self.policy = policy.Policy(self.cont, self.MainNetwork, self.env_n)
         n_p_o = self.env.reset()
         t = 0

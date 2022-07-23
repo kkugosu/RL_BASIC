@@ -20,7 +20,7 @@ class ACPolicy(BASE.BasePolicy):
         self.baseDQN = NN.SimpleNN(self.o_s, self.h_s, self.a_s).to(self.device)
         self.baseDQN.eval()
         self.policy = policy.Policy(self.cont, self.updatedPG, self.env_n)
-        self.buffer = buffer.Simulate(self.env, self.policy, step_size=1)
+        self.buffer = buffer.Simulate(self.env, self.policy, step_size=self.e_trace)
         self.optimizer_p = torch.optim.SGD(self.updatedPG.parameters(), lr=self.lr)
         self.optimizer_q = torch.optim.SGD(self.updatedDQN.parameters(), lr=self.lr)
         self.softmax = nn.Softmax(dim=-1)
@@ -32,6 +32,8 @@ class ACPolicy(BASE.BasePolicy):
             print("loading")
             self.updatedPG.load_state_dict(torch.load(self.PARAM_PATH + "/1.pth"))
             self.updatedDQN.load_state_dict(torch.load(self.PARAM_PATH + "/2.pth"))
+            self.baseDQN.load_state_dict(self.updatedDQN.state_dict())
+            self.baseDQN.eval()
             print("loading complete")
         else:
             pass
@@ -75,8 +77,8 @@ class ACPolicy(BASE.BasePolicy):
                 n_a_expect = self.policy.select_action(n_o)
                 t_a_index = self.converter.act2index(n_a_expect, self.b_s).unsqueeze(-1)
 
-                t_qvalue = torch.gather(self.baseDQN(t_o), 1, t_a_index) #why 1000*1000
-                t_qvalue = t_qvalue*GAMMA + t_r.unsqueeze(-1)
+                t_qvalue = torch.gather(self.baseDQN(t_o), 1, t_a_index)
+                t_qvalue = t_qvalue*(GAMMA**self.e_trace) + t_r.unsqueeze(-1)
 
             dqn_loss = self.criterion(t_p_qvalue, t_qvalue)
 

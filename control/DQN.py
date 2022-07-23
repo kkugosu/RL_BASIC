@@ -14,7 +14,7 @@ class DQNPolicy(BASE.BasePolicy):
         self.baseDQN = NN.SimpleNN(self.o_s, self.h_s, self.a_s).to(self.device)
         self.baseDQN.eval()
         self.policy = policy.Policy(self.cont, self.MainNetwork, self.env_n)
-        self.buffer = buffer.Simulate(self.env, self.policy, step_size=1)
+        self.buffer = buffer.Simulate(self.env, self.policy, step_size=self.e_trace)
         self.optimizer = torch.optim.SGD(self.MainNetwork.parameters(), lr=self.lr)
         self.criterion = nn.MSELoss(reduction='mean')
 
@@ -23,6 +23,8 @@ class DQNPolicy(BASE.BasePolicy):
         if int(load) == 1:
             print("loading")
             self.MainNetwork.load_state_dict(torch.load(self.PARAM_PATH + '/1.pth'))
+            self.baseDQN.load_state_dict(self.MainNetwork.state_dict())
+            self.baseDQN.eval()
             print("loading complete")
         else:
             pass
@@ -59,7 +61,7 @@ class DQNPolicy(BASE.BasePolicy):
 
             with torch.no_grad():
                 t_qvalue = self.baseDQN(t_o)
-                t_qvalue = torch.max(t_qvalue, dim=1)[0] * GAMMA
+                t_qvalue = torch.max(t_qvalue, dim=1)[0] * (GAMMA**self.e_trace)
                 t_qvalue = t_qvalue + t_r
             loss = self.criterion(t_p_qvalue, t_qvalue.unsqueeze(axis=-1))
             self.optimizer.zero_grad()

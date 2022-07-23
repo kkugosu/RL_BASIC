@@ -28,7 +28,8 @@ class BasePolicy:
                  t_i,
                  m_i,
                  cont,
-                 env_n
+                 env_n,
+                 e_trace
                  ):
         self.b_s = b_s
         self.ca = ca
@@ -38,6 +39,7 @@ class BasePolicy:
         self.m_i = m_i
         self.cont = cont
         self.env_n = env_n
+        self.e_trace = e_trace
         self.device = DEVICE
 
         self.PARAM_PATH = 'Parameter/' + self.env_n + self.cont

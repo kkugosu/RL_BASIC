@@ -66,17 +66,16 @@ class ACPolicy(BASE.BasePolicy):
             t_p_qvalue = torch.gather(self.updatedDQN(t_p_o), 1, t_a_index)
 
             criterion = nn.MSELoss()
-            weight = torch.log(t_p_weight)
-            pg_loss = -t_p_qvalue*weight
+            weight = torch.transpose(torch.log(t_p_weight), 0, 1)
+
+            pg_loss = -torch.matmul(weight, t_p_qvalue)
+
             # [1,2,3] * [1,2,3] = [1,4,9]
 
             with torch.no_grad():
-
                 n_a_expect = self.policy.select_action(n_o)
                 t_a_index = self.converter.act2index(n_a_expect, self.b_s).unsqueeze(-1)
-
                 t_qvalue = torch.gather(self.baseDQN(t_o), 1, t_a_index)
-
                 t_qvalue = t_qvalue*GAMMA + t_r
             dqn_loss = criterion(t_p_qvalue, t_qvalue)
 

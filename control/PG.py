@@ -54,7 +54,9 @@ class PGPolicy(BASE.BasePolicy):
             t_p_o_softmax = self.softmax(self.updatedPG(t_p_o))
             t_p_weight = torch.gather(t_p_o_softmax, 1, t_a_index)
             weight = torch.log(t_p_weight)
-            loss = -torch.matmul(weight, t_r)
+            p_values = torch.transpose(t_r.unsqueeze(-1), 0, 1)
+            loss = -torch.matmul(p_values, weight)
+
             # [1,2,3] * [1,2,3] = [1,4,9]
             self.optimizer.zero_grad()
             loss.backward()

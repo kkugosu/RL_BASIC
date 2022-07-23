@@ -62,6 +62,7 @@ class ACPolicy(BASE.BasePolicy):
 
             t_p_o_softmax = self.softmax(self.updatedPG(t_p_o))
             t_p_weight = torch.gather(t_p_o_softmax, 1, t_a_index)
+
             t_p_qvalue = torch.gather(self.updatedDQN(t_p_o), 1, t_a_index)
 
             criterion = nn.MSELoss()
@@ -72,10 +73,8 @@ class ACPolicy(BASE.BasePolicy):
             with torch.no_grad():
 
                 n_a_expect = self.policy.select_action(n_o)
-                t_a_index = self.converter.act2index(n_a_expect, self.b_s)
-                output = self.baseDQN(t_o)
-                print("first", np.shape(output))
-                print("sec", np.shape(t_a_index))
+                t_a_index = self.converter.act2index(n_a_expect, self.b_s).unsqueeze(-1)
+
                 t_qvalue = torch.gather(self.baseDQN(t_o), 1, t_a_index)
 
                 t_qvalue = t_qvalue*GAMMA + t_r

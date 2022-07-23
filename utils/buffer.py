@@ -4,6 +4,7 @@ import numpy as np
 from utils import converter
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 # self.converter = converter.Converter(self.envname)
+GAMMA = 0.98
 
 
 class Simulate:
@@ -54,14 +55,14 @@ class Simulate:
                 done[global_index] = local_index
             global_index = global_index - 1
         # cal newreward per state-action pair
-        gamma = 0.98
+
         global_index = 0
         while global_index < len(done):
             observation[global_index] = observation[int(global_index + done[global_index] - 1)]
             # change observation to last step indexed observation state
             local_index = 1
             while local_index < done[global_index]:
-                tmp = reward[global_index + local_index] * gamma ** local_index
+                tmp = reward[global_index + local_index] * GAMMA ** local_index
                 reward[global_index] += tmp
                 local_index = local_index + 1
             global_index += 1

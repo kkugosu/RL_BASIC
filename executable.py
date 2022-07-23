@@ -1,7 +1,7 @@
 import base64
 from varname import nameof
 import gym
-from control import DQN, PG, AC, BASE
+from control import DQN, PG, AC, DDPG, SAC, TRPO, PPO
 from utils import render
 
 if __name__ == "__main__":
@@ -60,6 +60,16 @@ if __name__ == "__main__":
             valid = 1
         elif control == "DQN":
             valid = 1
+        elif control == "AC":
+            valid = 1
+        elif control == "TRPO":
+            valid = 1
+        elif control == "PPO":
+            valid = 1
+        elif control == "DDPG":
+            valid = 1
+        elif control == "SAC":
+            valid = 1
         else:
             print("error")
 
@@ -84,15 +94,43 @@ if __name__ == "__main__":
     print("load enter 0 or 1")
     load_ = input("->")
 
-    if control == PG:
+    if control == "PG":
         mechanism = PG.PGPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
                                 learning_rate, TRAIN_ITER, MEMORY_ITER, control, envname)
         mechanism.training(load=load_)
 
-    else:
+    elif control == "DQN":
         mechanism = DQN.DQNPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
                                   learning_rate, TRAIN_ITER, MEMORY_ITER, control, envname)
         mechanism.training(load=load_)
+
+    elif control == "DDPG":
+        mechanism = DDPG.DDPGPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
+                                    learning_rate, TRAIN_ITER, MEMORY_ITER, control, envname)
+        mechanism.training(load=load_)
+
+    elif control == "TRPO":
+        mechanism = TRPO.TRPOPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
+                                    learning_rate, TRAIN_ITER, MEMORY_ITER, control, envname)
+        mechanism.training(load=load_)
+
+    elif control == "PPO":
+        mechanism = PPO.PPOPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
+                                  learning_rate, TRAIN_ITER, MEMORY_ITER, control, envname)
+        mechanism.training(load=load_)
+
+    elif control == "SAC":
+        mechanism = SAC.SACPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
+                                  learning_rate, TRAIN_ITER, MEMORY_ITER, control, envname)
+        mechanism.training(load=load_)
+
+    elif control == "AC":
+        mechanism = AC.ACPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
+                                learning_rate, TRAIN_ITER, MEMORY_ITER, control, envname)
+        mechanism.training(load=load_)
+
+    else:
+        print("error")
 
     render.Render(BATCH_SIZE, CAPACITY, HIDDEN_SIZE, learning_rate, TRAIN_ITER, MEMORY_ITER, control, envname)
 

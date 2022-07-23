@@ -12,7 +12,7 @@ import torch.onnx as onnx
 GAMMA = 0.98
 
 
-class PGPolicy(BASE.BasePolicy):
+class ACPolicy(BASE.BasePolicy):
     def __init__(self, *args) -> None:
         super().__init__(*args)
         self.updatedPG = NN.SimpleNN(self.o_s, self.h_s, self.a_s).to(self.device)
@@ -70,8 +70,12 @@ class PGPolicy(BASE.BasePolicy):
             # [1,2,3] * [1,2,3] = [1,4,9]
 
             with torch.no_grad():
-                n_a = self.policy.select_action(n_o)
-                t_a_index = self.converter.act2index(n_a, self.b_s)
+
+                n_a_expect = self.policy.select_action(n_o)
+                t_a_index = self.converter.act2index(n_a_expect, self.b_s)
+                output = self.baseDQN(t_o)
+                print("first", np.shape(output))
+                print("sec", np.shape(t_a_index))
                 t_qvalue = torch.gather(self.baseDQN(t_o), 1, t_a_index)
 
                 t_qvalue = t_qvalue*GAMMA + t_r

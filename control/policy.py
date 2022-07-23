@@ -29,10 +29,11 @@ class Policy:
               | (self.policy == "TRPO")
               | (self.policy == "PPO")
               | (self.policy == "SAC")):
+
             with torch.no_grad():
                 t_p_qsa = self.model(t_p_o)
             t_a_index = torch.multinomial(t_p_qsa.exp(), 1)
-            n_a = self.converter.index2act(t_a_index[0], 1)
+            n_a = self.converter.index2act(t_a_index.squeeze(-1), 1)
             return n_a
 
         elif self.policy == "DDPG":

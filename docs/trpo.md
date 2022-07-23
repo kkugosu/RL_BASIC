@@ -23,3 +23,4 @@ $$ 3.\ \phi \leftarrow \phi - \alpha \Sigma_i {dQ \over d\phi} (s_i , a_i) (Q_\p
 
 $$ 4. update \ \theta $$
 
+in implementation, we can just add kld term to loss but when we backporpagate kld and objective at the same time, gradient of kld always 0 so kld term loss the meaning. so i backpropagate twice, first by objective and second by kld.

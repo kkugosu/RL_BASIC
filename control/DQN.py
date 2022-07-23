@@ -16,6 +16,7 @@ class DQNPolicy(BASE.BasePolicy):
         self.policy = policy.Policy(self.cont, self.MainNetwork, self.env_n)
         self.buffer = buffer.Simulate(self.env, self.policy, step_size=1)
         self.optimizer = torch.optim.SGD(self.MainNetwork.parameters(), lr=self.lr)
+        self.criterion = nn.MSELoss(reduction='mean')
 
     def training(self, load=int(0)):
 
@@ -55,12 +56,12 @@ class DQNPolicy(BASE.BasePolicy):
             t_o = torch.tensor(n_o, dtype=torch.float32).to(self.device)
             t_r = torch.tensor(n_r, dtype=torch.float32).to(self.device)
             t_p_qvalue = torch.gather(self.MainNetwork(t_p_o), 1, t_a_index)
-            criterion = nn.MSELoss()
+
             with torch.no_grad():
                 t_qvalue = self.baseDQN(t_o)
                 t_qvalue = torch.max(t_qvalue, dim=1)[0] * GAMMA
                 t_qvalue = t_qvalue + t_r
-            loss = criterion(t_p_qvalue, t_qvalue.unsqueeze(axis=-1))
+            loss = self.criterion(t_p_qvalue, t_qvalue.unsqueeze(axis=-1))
             self.optimizer.zero_grad()
             loss.backward()
             for param in self.MainNetwork.parameters():

@@ -57,13 +57,12 @@ class PGPolicy(BASE.BasePolicy):
             p_values = torch.transpose(t_r.unsqueeze(-1), 0, 1)
             loss = -torch.matmul(p_values, weight)
 
-            # [1,2,3] * [1,2,3] = [1,4,9]
             self.optimizer.zero_grad()
             loss.backward()
             for param in self.updatedPG.parameters():
                 param.grad.data.clamp_(-1, 1)
             self.optimizer.step()
             i = i + 1
-            print("loss = ", loss)
+        print("loss = ", loss)
 
         return loss

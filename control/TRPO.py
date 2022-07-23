@@ -29,8 +29,8 @@ class TRPOPolicy(BASE.BasePolicy):
 
         if int(load) == 1:
             print("loading")
-            self.updatedPG.load_state_dict(torch.load(self.PARAM_PATH + "/1"))
-            self.updatedDQN.load_state_dict(torch.load(self.PARAM_PATH + "/2"))
+            self.updatedPG.load_state_dict(torch.load(self.PARAM_PATH + "/1.pth"))
+            self.updatedDQN.load_state_dict(torch.load(self.PARAM_PATH + "/2.pth"))
             print("loading complete")
         else:
             pass
@@ -41,8 +41,8 @@ class TRPOPolicy(BASE.BasePolicy):
             pg_loss, dqn_loss = self.train_per_buff()
             self.writer.add_scalar("pg/loss", pg_loss, i)
             self.writer.add_scalar("dqn/loss", dqn_loss, i)
-            torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/1")
-            torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/2')
+            torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/1.pth")
+            torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/2.pth')
 
         self.env.close()
         self.writer.flush()
@@ -61,24 +61,26 @@ class TRPOPolicy(BASE.BasePolicy):
             t_r = torch.tensor(n_r, dtype=torch.float32).to(self.device)
 
             t_p_o_softmax = self.softmax(self.updatedPG(t_p_o))
+            with torch.no_grad():
+                t_p_o_softmax_ = t_p_o_softmax
             t_p_weight = torch.gather(t_p_o_softmax, 1, t_a_index)
             t_p_qvalue = torch.gather(self.updatedDQN(t_p_o), 1, t_a_index)
-
             criterion = nn.MSELoss()
-            weight = torch.log(t_p_weight)
-            pg_loss = -t_p_qvalue*weight
+            weight = torch.transpose(torch.log(t_p_weight), 0, 1)
+
+            pg_loss = -torch.matmul(weight, t_p_qvalue)
+
             # [1,2,3] * [1,2,3] = [1,4,9]
 
             with torch.no_grad():
                 n_a_expect = self.policy.select_action(n_o)
-                t_a_index = self.converter.act2index(n_a_expect, self.b_s)
+                t_a_index = self.converter.act2index(n_a_expect, self.b_s).unsqueeze(-1)
                 t_qvalue = torch.gather(self.baseDQN(t_o), 1, t_a_index)
-
                 t_qvalue = t_qvalue*GAMMA + t_r
             dqn_loss = criterion(t_p_qvalue, t_qvalue)
 
             self.optimizer_p.zero_grad()
-            pg_loss.backward()
+            pg_loss.backward(retain_graph=True)
             for param in self.updatedPG.parameters():
                 param.grad.data.clamp_(-1, 1)
             self.optimizer_p.step()

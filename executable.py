@@ -118,11 +118,13 @@ if __name__ == "__main__":
         mechanism = TRPO.TRPOPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
                                     learning_rate, TRAIN_ITER, MEMORY_ITER, control, envname, e_trace)
         mechanism.training(load=load_)
+        policy = mechanism.get_policy()
 
     elif control == "PPO":
         mechanism = PPO.PPOPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
                                   learning_rate, TRAIN_ITER, MEMORY_ITER, control, envname, e_trace)
         mechanism.training(load=load_)
+        policy = mechanism.get_policy()
 
     elif control == "SAC":
         mechanism = SAC.SACPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,

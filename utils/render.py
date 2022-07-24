@@ -10,11 +10,11 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
 class Render(BASE.BasePolicy):
-    def __init__(self, *args):
+    def __init__(self, p, *args):
         super().__init__(*args)
-        self.MainNetwork = NN.SimpleNN(self.o_s, self.h_s, self.a_s).to(device)
-        self.MainNetwork.load_state_dict(torch.load(self.PARAM_PATH + '/1.pth'))
-        self.policy = policy.Policy(self.cont, self.MainNetwork, self.env_n)
+        self.policy = p
+
+    def rend(self):
         n_p_o = self.env.reset()
         t = 0
         local = 0
@@ -29,6 +29,3 @@ class Render(BASE.BasePolicy):
                 print("Episode finished after {} timesteps".format(local+1))
                 local = 0
                 self.env.reset()
-
-
-

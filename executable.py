@@ -12,6 +12,7 @@ if __name__ == "__main__":
     MEMORY_ITER = 100
     HIDDEN_SIZE = 32
     learning_rate = 0.01
+    policy = None
 
     def getinteger(integer):
         valid = 0
@@ -73,20 +74,20 @@ if __name__ == "__main__":
         else:
             print("error")
 
+    print("enter HIDDEN_SIZE")
+    HIDDEN_SIZE = getinteger(HIDDEN_SIZE)
+
     print("enter batchsize")
     BATCH_SIZE = getinteger(BATCH_SIZE)
 
     print("enter memory capacity")
     CAPACITY = getinteger(CAPACITY)
 
-    print("train iter per memory will be")
+    print("memory reset time will be")
     TRAIN_ITER = getinteger(TRAIN_ITER)
 
-    print("memory reset time will be")
+    print("train_iteration per memory")
     MEMORY_ITER = getinteger(MEMORY_ITER)
-
-    print("enter HIDDEN_SIZE")
-    HIDDEN_SIZE = getinteger(HIDDEN_SIZE)
 
     print("enter learning rate")
     learning_rate = getfloat(learning_rate)
@@ -100,11 +101,13 @@ if __name__ == "__main__":
         mechanism = PG.PGPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
                                 learning_rate, TRAIN_ITER, MEMORY_ITER, control, envname, e_trace)
         mechanism.training(load=load_)
+        policy = mechanism.get_policy()
 
     elif control == "DQN":
         mechanism = DQN.DQNPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
                                   learning_rate, TRAIN_ITER, MEMORY_ITER, control, envname, e_trace)
         mechanism.training(load=load_)
+        policy = mechanism.get_policy()
 
     elif control == "DDPG":
         mechanism = DDPG.DDPGPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
@@ -130,10 +133,12 @@ if __name__ == "__main__":
         mechanism = AC.ACPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
                                 learning_rate, TRAIN_ITER, MEMORY_ITER, control, envname, e_trace)
         mechanism.training(load=load_)
+        policy = mechanism.get_policy()
 
     else:
         print("error")
 
-    render.Render(BATCH_SIZE, CAPACITY, HIDDEN_SIZE, learning_rate, TRAIN_ITER, MEMORY_ITER, control, envname, e_trace)
-
+    my_rend = render.Render(policy, BATCH_SIZE, CAPACITY, HIDDEN_SIZE, learning_rate,
+                            TRAIN_ITER, MEMORY_ITER, control, envname, e_trace)
+    my_rend.rend()
 

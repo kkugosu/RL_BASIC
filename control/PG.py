@@ -16,11 +16,13 @@ GAMMA = 0.98
 class PGPolicy(BASE.BasePolicy):
     def __init__(self, *args) -> None:
         super().__init__(*args)
-        self.updatedPG = NN.SimpleNN(self.o_s, self.h_s, self.a_s).to(self.device)
+        self.updatedPG = NN.ProbNN(self.o_s, self.h_s, self.a_s).to(self.device)
         self.policy = policy.Policy(self.cont, self.updatedPG, self.env_n)
         self.buffer = buffer.Simulate(self.env, self.policy, step_size=self.e_trace)
         self.optimizer = torch.optim.SGD(self.updatedPG.parameters(), lr=self.lr)
-        self.softmax = nn.Softmax(dim=-1)
+
+    def get_policy(self):
+        return self.policy
 
     def training(self, load=int(0)):
 
@@ -51,8 +53,7 @@ class PGPolicy(BASE.BasePolicy):
             t_a_index = self.converter.act2index(n_a, self.b_s).unsqueeze(axis=-1)
             t_r = torch.tensor(n_r, dtype=torch.float32).to(self.device)
 
-            t_p_o_softmax = self.softmax(self.updatedPG(t_p_o))
-            t_p_weight = torch.gather(t_p_o_softmax, 1, t_a_index)
+            t_p_weight = torch.gather(self.updatedPG(t_p_o), 1, t_a_index)
             weight = torch.log(t_p_weight)
             p_values = torch.transpose(t_r.unsqueeze(-1), 0, 1)
             loss = -torch.matmul(p_values, weight)

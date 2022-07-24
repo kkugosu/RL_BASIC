@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     valid = 0
     while valid == 0:
-        print("enter RL control, {PG, DQN, ...}")
+        print("enter RL control, {PG, DQN, AC, TRPO, PPO, DDPG, SAC}")
         control = input("->")
         if control == "PG":
             valid = 1
@@ -75,25 +75,25 @@ if __name__ == "__main__":
         else:
             print("error")
 
-    print("enter HIDDEN_SIZE")
+    print("enter HIDDEN_SIZE mostly 32")
     HIDDEN_SIZE = getinteger(HIDDEN_SIZE)
 
-    print("enter batchsize")
+    print("enter batchsize mostly 1000")
     BATCH_SIZE = getinteger(BATCH_SIZE)
 
-    print("enter memory capacity")
+    print("enter memory capacity mostly 1000")
     CAPACITY = getinteger(CAPACITY)
 
-    print("memory reset time will be")
+    print("memory reset time will be mostly 100")
     TRAIN_ITER = getinteger(TRAIN_ITER)
 
-    print("train_iteration per memory")
+    print("train_iteration per memory mostly 20")
     MEMORY_ITER = getinteger(MEMORY_ITER)
 
-    print("enter learning rate")
+    print("enter learning rate mostly 0.01")
     learning_rate = getfloat(learning_rate)
 
-    print("load enter 0 or 1")
+    print("load previous model 0 or 1")
     load_ = input("->")
     e_trace = 1
 
@@ -135,6 +135,7 @@ if __name__ == "__main__":
         mechanism = SAC.SACPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
                                   learning_rate, TRAIN_ITER, MEMORY_ITER, control, envname, e_trace)
         mechanism.training(load=load_)
+        policy = mechanism.get_policy()
 
     elif control == "AC":
         mechanism = AC.ACPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,

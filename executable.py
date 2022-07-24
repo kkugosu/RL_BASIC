@@ -48,6 +48,7 @@ if __name__ == "__main__":
         envname = input("->")
         if envname == "cart":
             valid = 1
+            print("we can't use DDPG")
         elif envname == "hope":
             valid = 1
         else:
@@ -110,9 +111,13 @@ if __name__ == "__main__":
         policy = mechanism.get_policy()
 
     elif control == "DDPG":
-        mechanism = DDPG.DDPGPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
-                                    learning_rate, TRAIN_ITER, MEMORY_ITER, control, envname, e_trace)
-        mechanism.training(load=load_)
+        if envname == "hope":
+            mechanism = DDPG.DDPGPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
+                                        learning_rate, TRAIN_ITER, MEMORY_ITER, control, envname, e_trace)
+            mechanism.training(load=load_)
+            policy = mechanism.get_policy()
+        else:
+            pass
 
     elif control == "TRPO":
         mechanism = TRPO.TRPOPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,

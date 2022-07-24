@@ -2,11 +2,8 @@ import torch
 import random
 import numpy as np
 from NeuralNetwork import NN
-from control import BASE, policy
-from utils import converter
-from control import policy
+from control import BASE
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-# self.converter = converter.Converter(self.envname)
 
 
 class Render(BASE.BasePolicy):

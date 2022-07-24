@@ -3,7 +3,6 @@ import gym
 import torch
 import numpy as np
 import sys
-from torchvision.transforms import ToTensor, Lambda
 from torch import nn
 from NeuralNetwork import NN
 from utils import buffer

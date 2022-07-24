@@ -50,9 +50,9 @@ class Converter:
                     _input[i] = _input[i] * 2
                     out[i] = _input[i][2] * 25 + _input[i][1] * 5 + _input[i][0]
                     i = i + 1
-            return torch.from_numpy(out).to(DEVICE)
+            return torch.from_numpy(out).to(DEVICE).type(torch.int64)
         elif self.envname == "cart":
-            return torch.from_numpy(_input).to(DEVICE)
+            return torch.from_numpy(_input).to(DEVICE).type(torch.int64)
         else:
             print("converter error")
 

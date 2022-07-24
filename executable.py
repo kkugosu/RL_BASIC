@@ -1,6 +1,4 @@
-import base64
 from varname import nameof
-import gym
 from control import DQN, PG, AC, DDPG, SAC, TRPO, PPO
 from utils import render
 

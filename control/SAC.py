@@ -3,7 +3,6 @@ import gym
 import torch
 import numpy as np
 import sys
-from torchvision.transforms import ToTensor, Lambda
 from torch import nn
 from NeuralNetwork import NN
 from utils import buffer
@@ -78,6 +77,7 @@ class SACPolicy(BASE.BasePolicy):
             t_p_weight = torch.gather(self.updatedPG(t_p_o), 1, t_a_index)
             t_p_qvalue = torch.gather(self.updatedDQN(t_p_o), 1, t_a_index)
             pg_loss = torch.mean(torch.log(t_p_weight) - t_p_qvalue)
+            # we already sampled according to policy
 
             with torch.no_grad():
                 n_a_expect = self.policy.select_action(n_o)

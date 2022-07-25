@@ -1,10 +1,10 @@
 ## Installation
-git clone https://github.com/kkugosu/RL_BASIC.git
+* git clone https://github.com/kkugosu/RL_BASIC.git
 
 ## Experiment
-python executable.py
+* python executable.py
 
-choose environments, policy, parameters
+* choose environments, policy, parameters
 
 ## Experiment environment
 
@@ -39,8 +39,8 @@ choose environments, policy, parameters
 
 ## REPO
 
-papers
+* papers
 
-cs285
+* cs285
 
-hui reinforcement learning blog
+* hui reinforcement learning blog

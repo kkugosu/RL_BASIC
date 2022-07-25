@@ -1,11 +1,11 @@
 ## Installation
-'''
+```
 git clone https://github.com/kkugosu/RL_BASIC.git
-'''
+```
 ## Experiment
-'''
+```
 python executable.py
-'''
+```
 * choose 
 * environments 
 * policy 

@@ -1,3 +1,10 @@
+## Installation
+git clone https://github.com/kkugosu/RL_BASIC.git
+
+## Experiment
+python executable.py
+choose environments, policy, parameters
+
 ## Experiment environment
 
 * cartpole
@@ -35,4 +42,4 @@ papers
 
 cs285
 
-hui blog
+hui reinforcement learning blog

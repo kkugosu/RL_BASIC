@@ -14,9 +14,9 @@ GAMMA = 0.98
 class DDPGPolicy(BASE.BasePolicy):
     def __init__(self, *args) -> None:
         super().__init__(*args)
-        self.updatedPG = NN.ProbNN(self.o_s, self.h_s, self.a_s).to(self.device)
-        self.updatedDQN = NN.ValueNN(self.o_s, self.h_s, self.a_s).to(self.device)
-        self.baseDQN = NN.ValueNN(self.o_s, self.h_s, self.a_s).to(self.device)
+        self.updatedPG = NN.ValueNN(self.o_s, self.h_s, self.a_s).to(self.device)
+        self.updatedDQN = NN.ValueNN(self.o_s + self.a_s, self.h_s, 1).to(self.device)
+        self.baseDQN = NN.ValueNN(self.o_s + self.a_s, self.h_s, 1).to(self.device)
         self.baseDQN.eval()
         self.policy = policy.Policy(self.cont, self.updatedPG, self.env_n)
         self.buffer = buffer.Simulate(self.env, self.policy, step_size=self.e_trace)
@@ -65,42 +65,42 @@ class DDPGPolicy(BASE.BasePolicy):
 
     def train_per_buff(self):
         i = 0
-        dqn_loss = None
-        pg_loss = None
+        queue_loss = None
+        policy_loss = None
         while i < self.m_i:
-            # print(i)
+
             n_p_o, n_a, n_o, n_r, n_d = next(iter(self.dataloader))
             t_p_o = torch.tensor(n_p_o, dtype=torch.float32).to(self.device)
-            t_a_index = self.converter.act2index(n_a, self.b_s).unsqueeze(axis=-1)
+            t_a = torch.tensor(n_a, dtype=torch.float32).to(self.device)
             t_o = torch.tensor(n_o, dtype=torch.float32).to(self.device)
             t_r = torch.tensor(n_r, dtype=torch.float32).to(self.device)
-            t_p_weight = torch.gather(self.updatedPG(t_p_o), 1, t_a_index)
-            t_p_qvalue = torch.gather(self.updatedDQN(t_p_o), 1, t_a_index)
-            weight = torch.transpose(torch.log(t_p_weight), 0, 1)
-            pg_loss = -torch.matmul(weight, t_p_qvalue)
+            dqn_input = torch.cat((t_p_o, t_a), dim=-1)
+            t_p_qvalue = self.updatedDQN(dqn_input)
+
+            policy_loss = - self.updatedDQN(torch.cat(t_p_o, self.updatedPG(t_p_o)), dim=-1)
 
             with torch.no_grad():
                 n_a_expect = self.policy.select_action(n_o)
-                t_a_index = self.converter.act2index(n_a_expect, self.b_s).unsqueeze(-1)
-                t_qvalue = torch.gather(self.baseDQN(t_o), 1, t_a_index)
-                t_qvalue = t_qvalue*(GAMMA**self.e_trace) + t_r.unsqueeze(-1)
+                t_a_expect = torch.tensor(n_a_expect)
+                dqn_input = torch.cat((t_o, t_a_expect), dim=-1)
+                t_qvalue = dqn_input*(GAMMA**self.e_trace) + t_r.unsqueeze(-1)
 
-            dqn_loss = self.criterion(t_p_qvalue, t_qvalue)
+            queue_loss = self.criterion(t_p_qvalue, t_qvalue)
 
             self.optimizer_p.zero_grad()
-            pg_loss.backward(retain_graph=True)
+            policy_loss.backward(retain_graph=True)
             for param in self.updatedPG.parameters():
                 param.grad.data.clamp_(-1, 1)
             self.optimizer_p.step()
 
             self.optimizer_q.zero_grad()
-            dqn_loss.backward()
+            queue_loss.backward()
             for param in self.updatedDQN.parameters():
                 param.grad.data.clamp_(-1, 1)
             self.optimizer_q.step()
 
             i = i + 1
-        print("loss1 = ", pg_loss)
-        print("loss2 = ", dqn_loss)
+        print("loss1 = ", policy_loss)
+        print("loss2 = ", queue_loss)
 
-        return pg_loss, dqn_loss
+        return policy_loss, queue_loss

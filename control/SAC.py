@@ -65,8 +65,8 @@ class SACPolicy(BASE.BasePolicy):
 
     def train_per_buff(self):
         i = 0
-        dqn_loss = None
-        pg_loss = None
+        queue_loss = None
+        policy_loss = None
         while i < self.m_i:
             # print(i)
             n_p_o, n_a, n_o, n_r, n_d = next(iter(self.dataloader))
@@ -76,7 +76,7 @@ class SACPolicy(BASE.BasePolicy):
             t_r = torch.tensor(n_r, dtype=torch.float32).to(self.device)
             t_p_weight = torch.gather(self.updatedPG(t_p_o), 1, t_a_index)
             t_p_qvalue = torch.gather(self.updatedDQN(t_p_o), 1, t_a_index)
-            pg_loss = torch.mean(torch.log(t_p_weight) - t_p_qvalue)
+            policy_loss = torch.mean(torch.log(t_p_weight) - t_p_qvalue)
             # we already sampled according to policy
 
             with torch.no_grad():
@@ -85,22 +85,22 @@ class SACPolicy(BASE.BasePolicy):
                 t_qvalue = torch.gather(self.baseDQN(t_o), 1, t_a_index)
                 t_qvalue = t_qvalue*(GAMMA**self.e_trace) + t_r.unsqueeze(-1)
 
-            dqn_loss = self.criterion(t_p_qvalue, t_qvalue)
+            queue_loss = self.criterion(t_p_qvalue, t_qvalue)
 
             self.optimizer_p.zero_grad()
-            pg_loss.backward(retain_graph=True)
+            policy_loss.backward(retain_graph=True)
             for param in self.updatedPG.parameters():
                 param.grad.data.clamp_(-1, 1)
             self.optimizer_p.step()
 
             self.optimizer_q.zero_grad()
-            dqn_loss.backward()
+            queue_loss.backward()
             for param in self.updatedDQN.parameters():
                 param.grad.data.clamp_(-1, 1)
             self.optimizer_q.step()
 
             i = i + 1
-        print("loss1 = ", pg_loss)
-        print("loss2 = ", dqn_loss)
+        print("loss1 = ", policy_loss)
+        print("loss2 = ", queue_loss)
 
-        return pg_loss, dqn_loss
+        return policy_loss, queue_loss

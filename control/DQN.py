@@ -3,7 +3,6 @@ import torch
 from NeuralNetwork import NN
 from utils import buffer
 from torch import nn
-import numpy as np
 GAMMA = 0.98
 
 
@@ -60,7 +59,6 @@ class DQNPolicy(BASE.BasePolicy):
             t_a_index = self.converter.act2index(n_a, self.b_s).unsqueeze(axis=-1)
             t_o = torch.tensor(n_o, dtype=torch.float32).to(self.device)
             t_r = torch.tensor(n_r, dtype=torch.float32).to(self.device)
-
             t_p_qvalue = torch.gather(self.MainNetwork(t_p_o), 1, t_a_index)
 
             with torch.no_grad():

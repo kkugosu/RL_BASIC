@@ -4,8 +4,7 @@ from utils import converter
 from utils import dataset, dataloader
 import torch
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
-HOP_ACTION = 125
-CART_ACTION = 2
+HOP_ACTION_SECTION = 5
 
 
 class BasePolicy:
@@ -56,12 +55,15 @@ class BasePolicy:
             self.env = gym.make('Hopper-v3')
 
         self.o_s = len(self.env.observation_space.sample())
+        self.a_s = len(self.env.action_space.sample())
         print("STATE_SIZE(input) = ", self.o_s)
 
         if self.env_n == "cart":
-            self.a_s = CART_ACTION
+            self.a_s = len(self.env.action_space.sample())
+            self.a_index_s = len(self.env.action_space.sample())
         else:
-            self.a_s = HOP_ACTION
+            self.a_s = len(self.env.action_space.sample())
+            self.a_index_s = HOP_ACTION_SECTION ** self.a_s
         print("ACTION_SIZE(output) = ", self.a_s)
         
         self.data = dataset.SimData(capacity=self.ca)

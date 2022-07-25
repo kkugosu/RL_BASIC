@@ -6,7 +6,7 @@ git clone https://github.com/kkugosu/RL_BASIC.git
 ```
 python executable.py
 ```
-* choose 
+you can choose belows
 * environments 
 * policy 
 * hiddenlayer size

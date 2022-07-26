@@ -1,9 +1,8 @@
 import torch
 import random
 import numpy as np
-from utils import converter
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-# self.converter = converter.Converter(self.envname)
+
 GAMMA = 0.98
 
 

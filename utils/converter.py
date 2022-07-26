@@ -11,56 +11,57 @@ class Converter:
     numpy action
     -> torch index
     """
-    def __init__(self, envname):
-        self.envname = envname
+    def __init__(self, env_name, a_s, precision):
+        self.env_name = env_name
+        self.a_s = a_s
+        self.precision = precision
+        self.gauge = 2.0/(self.precision - 1.0)
 
     def index2act(self, _input, batch):
-        if self.envname == "hope":
+        if self.env_name == "hope":
             if batch == 1:
-                first_action = (_input % 5 / 2) - 1
-                sec_action = ((_input % 25 - _input % 5) / 10) - 1
-                third_action = ((_input - _input % 25) / 50) - 1
-                out = torch.tensor([first_action, sec_action, third_action], device=DEVICE)
+                a_1 = _input % self.precision
+                a_2 = (_input//self.precision) % self.precision
+                a_3 = ((_input//self.precision)//self.precision) % self.precision
+                out = torch.tensor([a_1, a_2, a_3], device=DEVICE)*self.gauge - 1
             else:
                 i = 0
-                out = torch.zeros((10, 3), device=DEVICE)
+                out = torch.zeros((batch, self.a_s), device=DEVICE)
                 while i < batch:
-                    first_action = (_input[i] % 5 / 2) - 1
-                    sec_action = ((_input[i] % 25 - _input[i] % 5) / 10) - 1
-                    third_action = ((_input[i] - _input[i] % 25) / 50) - 1
-                    out[i] = torch.tensor([first_action, sec_action, third_action], device=DEVICE)
+                    a_1 = _input % self.precision
+                    a_2 = (_input // self.precision) % self.precision
+                    a_3 = ((_input // self.precision) // self.precision) % self.precision
+                    out[i] = torch.tensor([a_1, a_2, a_3], device=DEVICE)*self.gauge - 1
                     i = i + 1
             return out.cpu().numpy()
-        elif self.envname == "cart":
+        elif self.env_name == "cart":
             return _input.cpu().numpy()
         else:
             print("converter error")
 
     def act2index(self, _input, batch):
-        if self.envname == "hope":
+        if self.env_name == "hope":
             if batch == 1:
-                _input = _input + 1
-                _input = _input * 2
-                out = _input[2] * 25 + _input[1] * 5 + _input[0]
+                _input = (_input+1)/self.gauge
+                out = _input[2] * self.precision**2 + _input[1] * self.precision + _input[0]
             else:
                 i = 0
                 out = np.zeros(batch)
                 while i < batch:
-                    _input[i] = _input[i] + 1
-                    _input[i] = _input[i] * 2
-                    out[i] = _input[i][2] * 25 + _input[i][1] * 5 + _input[i][0]
+                    _input[i] = (_input[i]+1)/self.gauge
+                    out[i] = _input[i][2] * self.precision**2 + _input[i][1] * self.precision + _input[i][0]
                     i = i + 1
             return torch.from_numpy(out).to(DEVICE).type(torch.int64)
-        elif self.envname == "cart":
+        elif self.env_name == "cart":
             return torch.from_numpy(_input).to(DEVICE).type(torch.int64)
         else:
             print("converter error")
 
     def rand_act(self):
-        if self.envname == "hope":
-            return (np.random.randint(5, size=(3,)) - 2)/2
-        elif self.envname == "cart":
-            _a = np.random.randint(2, size=(1,))
+        if self.env_name == "hope":
+            return (np.random.randint(self.precision, size=(self.a_s,))*self.gauge) - 1
+        elif self.env_name == "cart":
+            _a = np.random.randint(self.a_s, size=(1,))
             return _a[0]
         else:
             print("converter error")

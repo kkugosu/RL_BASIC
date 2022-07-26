@@ -1,4 +1,3 @@
-from varname import nameof
 from control import DQN, PG, AC, DDPG, SAC, TRPO, PPO
 from utils import render
 
@@ -12,42 +11,42 @@ if __name__ == "__main__":
     learning_rate = 0.01
     policy = None
 
-    def getinteger(integer):
-        valid = 0
-        while valid == 0:
+    def get_integer():
+        _valid = 0
+        while _valid == 0:
             integer = input("->")
             try:
                 int(integer)
                 if float(integer).is_integer():
-                    valid = 1
+                    _valid = 1
                     return int(integer)
                 else:
                     print("enter integer")
             except ValueError:
                 print("enter integer")
 
-
-    def getfloat(float_):
-        valid = 0
-        while valid == 0:
+    def get_float():
+        _valid = 0
+        while _valid == 0:
             float_ = input("->")
             try:
                 float(float_)
-                valid = 1
+                _valid = 1
                 return float(float_)
             except ValueError:
                 print("enter float")
-    envname = None
+
+    env_name = None
     control = None
 
     valid = 0
     while valid == 0:
         print("enter envname, {cartpole as cart, hoppper as hope}")
-        envname = input("->")
-        if envname == "cart":
+        env_name = input("->")
+        if env_name == "cart":
             valid = 1
             print("we can't use DDPG")
-        elif envname == "hope":
+        elif env_name == "hope":
             valid = 1
         else:
             print("error")
@@ -74,22 +73,22 @@ if __name__ == "__main__":
             print("error")
 
     print("enter HIDDEN_SIZE mostly 32")
-    HIDDEN_SIZE = getinteger(HIDDEN_SIZE)
+    HIDDEN_SIZE = get_integer()
 
     print("enter batchsize mostly 1000")
-    BATCH_SIZE = getinteger(BATCH_SIZE)
+    BATCH_SIZE = get_integer()
 
     print("enter memory capacity mostly 1000")
-    CAPACITY = getinteger(CAPACITY)
+    CAPACITY = get_integer()
 
     print("memory reset time will be mostly 100")
-    TRAIN_ITER = getinteger(TRAIN_ITER)
+    TRAIN_ITER = get_integer()
 
     print("train_iteration per memory mostly 20")
-    MEMORY_ITER = getinteger(MEMORY_ITER)
+    MEMORY_ITER = get_integer()
 
     print("enter learning rate mostly 0.01")
-    learning_rate = getfloat(learning_rate)
+    learning_rate = get_float()
 
     print("load previous model 0 or 1")
     load_ = input("->")
@@ -98,20 +97,20 @@ if __name__ == "__main__":
     if control == "PG":
         e_trace = 100
         mechanism = PG.PGPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
-                                learning_rate, TRAIN_ITER, MEMORY_ITER, control, envname, e_trace)
+                                learning_rate, TRAIN_ITER, MEMORY_ITER, control, env_name, e_trace)
         mechanism.training(load=load_)
         policy = mechanism.get_policy()
 
     elif control == "DQN":
         mechanism = DQN.DQNPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
-                                  learning_rate, TRAIN_ITER, MEMORY_ITER, control, envname, e_trace)
+                                  learning_rate, TRAIN_ITER, MEMORY_ITER, control, env_name, e_trace)
         mechanism.training(load=load_)
         policy = mechanism.get_policy()
 
     elif control == "DDPG":
-        if envname == "hope":
+        if env_name == "hope":
             mechanism = DDPG.DDPGPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
-                                        learning_rate, TRAIN_ITER, MEMORY_ITER, control, envname, e_trace)
+                                        learning_rate, TRAIN_ITER, MEMORY_ITER, control, env_name, e_trace)
             mechanism.training(load=load_)
             policy = mechanism.get_policy()
         else:
@@ -119,25 +118,25 @@ if __name__ == "__main__":
 
     elif control == "TRPO":
         mechanism = TRPO.TRPOPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
-                                    learning_rate, TRAIN_ITER, MEMORY_ITER, control, envname, e_trace)
+                                    learning_rate, TRAIN_ITER, MEMORY_ITER, control, env_name, e_trace)
         mechanism.training(load=load_)
         policy = mechanism.get_policy()
 
     elif control == "PPO":
         mechanism = PPO.PPOPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
-                                  learning_rate, TRAIN_ITER, MEMORY_ITER, control, envname, e_trace)
+                                  learning_rate, TRAIN_ITER, MEMORY_ITER, control, env_name, e_trace)
         mechanism.training(load=load_)
         policy = mechanism.get_policy()
 
     elif control == "SAC":
         mechanism = SAC.SACPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
-                                  learning_rate, TRAIN_ITER, MEMORY_ITER, control, envname, e_trace)
+                                  learning_rate, TRAIN_ITER, MEMORY_ITER, control, env_name, e_trace)
         mechanism.training(load=load_)
         policy = mechanism.get_policy()
 
     elif control == "AC":
         mechanism = AC.ACPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
-                                learning_rate, TRAIN_ITER, MEMORY_ITER, control, envname, e_trace)
+                                learning_rate, TRAIN_ITER, MEMORY_ITER, control, env_name, e_trace)
         mechanism.training(load=load_)
         policy = mechanism.get_policy()
 
@@ -145,6 +144,5 @@ if __name__ == "__main__":
         print("error")
 
     my_rend = render.Render(policy, BATCH_SIZE, CAPACITY, HIDDEN_SIZE, learning_rate,
-                            TRAIN_ITER, MEMORY_ITER, control, envname, e_trace)
+                            TRAIN_ITER, MEMORY_ITER, control, env_name, e_trace)
     my_rend.rend()
-

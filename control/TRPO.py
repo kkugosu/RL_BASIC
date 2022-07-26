@@ -14,13 +14,13 @@ GAMMA = 0.98
 class TRPOPolicy(BASE.BasePolicy):
     def __init__(self, *args) -> None:
         super().__init__(*args)
-        self.updatedPG = NN.ProbNN(self.o_s, self.h_s, self.a_s).to(self.device)
-        self.basePG = NN.ProbNN(self.o_s, self.h_s, self.a_s).to(self.device)
-        self.updatedDQN = NN.ValueNN(self.o_s, self.h_s, self.a_s).to(self.device)
-        self.baseDQN = NN.ValueNN(self.o_s, self.h_s, self.a_s).to(self.device)
+        self.updatedPG = NN.ProbNN(self.o_s, self.h_s, self.a_index_s).to(self.device)
+        self.basePG = NN.ProbNN(self.o_s, self.h_s, self.a_index_s).to(self.device)
+        self.updatedDQN = NN.ValueNN(self.o_s, self.h_s, self.a_index_s).to(self.device)
+        self.baseDQN = NN.ValueNN(self.o_s, self.h_s, self.a_index_s).to(self.device)
         self.basePG.eval()
         self.baseDQN.eval()
-        self.policy = policy.Policy(self.cont, self.updatedPG, self.env_n)
+        self.policy = policy.Policy(self.cont, self.updatedPG, self.converter)
         self.buffer = buffer.Simulate(self.env, self.policy, step_size=self.e_trace)
         self.optimizer_p = torch.optim.SGD(self.updatedPG.parameters(), lr=self.lr/100)
         self.optimizer_q = torch.optim.SGD(self.updatedDQN.parameters(), lr=self.lr)
@@ -72,8 +72,8 @@ class TRPOPolicy(BASE.BasePolicy):
 
     def train_per_buff(self):
         i = 0
-        dqn_loss = None
-        pg_loss = None
+        queue_loss = None
+        policy_loss = None
         while i < self.m_i:
             # print(i)
             n_p_o, n_a, n_o, n_r, n_d = next(iter(self.dataloader))
@@ -84,7 +84,7 @@ class TRPOPolicy(BASE.BasePolicy):
             t_p_weight = torch.gather(self.updatedPG(t_p_o), 1, t_a_index)
             t_p_qvalue = torch.gather(self.updatedDQN(t_p_o), 1, t_a_index)
             weight = torch.transpose(torch.log(t_p_weight), 0, 1)
-            pg_loss = -torch.matmul(weight, t_p_qvalue)
+            policy_loss = -torch.matmul(weight, t_p_qvalue)
 
             with torch.no_grad():
                 n_a_expect = self.policy.select_action(n_o)
@@ -92,16 +92,16 @@ class TRPOPolicy(BASE.BasePolicy):
                 t_qvalue = torch.gather(self.baseDQN(t_o), 1, t_a_index)
                 t_qvalue = t_qvalue*(GAMMA**self.e_trace) + t_r.unsqueeze(-1)
 
-            dqn_loss = self.criterion(t_p_qvalue, t_qvalue)
+            queue_loss = self.criterion(t_p_qvalue, t_qvalue)
 
             self.optimizer_p.zero_grad()
-            pg_loss.backward(retain_graph=True)
+            policy_loss.backward(retain_graph=True)
             for param in self.updatedPG.parameters():
                 param.grad.data.clamp_(-1, 1)
             self.optimizer_p.step()
 
             self.optimizer_q.zero_grad()
-            dqn_loss.backward(retain_graph=True)
+            queue_loss.backward(retain_graph=True)
             for param in self.updatedDQN.parameters():
                 param.grad.data.clamp_(-1, 1)
             self.optimizer_q.step()
@@ -116,7 +116,7 @@ class TRPOPolicy(BASE.BasePolicy):
             self.optimizer_p.step()
 
             i = i + 1
-        print("loss1 = ", pg_loss)
-        print("loss2 = ", dqn_loss)
+        print("loss1 = ", policy_loss)
+        print("loss2 = ", queue_loss)
 
-        return pg_loss, dqn_loss
+        return policy_loss, queue_loss

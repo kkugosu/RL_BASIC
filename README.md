@@ -1,3 +1,22 @@
+## Installation
+```
+git clone https://github.com/kkugosu/RL_BASIC.git
+```
+## Experiment
+```
+python executable.py
+```
+you can choose belows
+* environments 
+* policy 
+* hiddenlayer size
+* batch size
+* memory capacity
+* memory reset time
+* train time per memory
+* learning rate
+* load previous model or not (not = 0 yes = 1)
+
 ## Experiment environment
 
 * cartpole
@@ -31,8 +50,8 @@
 
 ## REPO
 
-papers
+* papers
 
-cs285
+* cs285
 
-hui blog
+* hui reinforcement learning blog

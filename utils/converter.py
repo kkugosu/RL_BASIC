@@ -20,19 +20,28 @@ class Converter:
     def index2act(self, _input, batch):
         if self.env_name == "hope":
             if batch == 1:
-                a_1 = _input % self.precision
-                a_2 = (_input//self.precision) % self.precision
-                a_3 = ((_input//self.precision)//self.precision) % self.precision
+                precision = torch.tensor(self.precision).to(DEVICE)
+                div_1 = torch.div(_input, precision, rounding_mode='floor')
+                div_2 = torch.div(div_1, precision, rounding_mode='floor')
+
+                a_1 = _input % precision
+                a_2 = div_1 % precision
+                a_3 = div_2 % precision
                 out = torch.tensor([a_1, a_2, a_3], device=DEVICE)*self.gauge - 1
             else:
                 i = 0
                 out = torch.zeros((batch, self.a_s), device=DEVICE)
                 while i < batch:
-                    a_1 = _input % self.precision
-                    a_2 = (_input // self.precision) % self.precision
-                    a_3 = ((_input // self.precision) // self.precision) % self.precision
+                    precision = torch.tensor(self.precision).to(DEVICE)
+                    div_1 = torch.div(_input, precision, rounding_mode='floor')
+                    div_2 = torch.div(div_1, precision, rounding_mode='floor')
+                    a_1 = _input % precision
+                    a_2 = div_1 % precision
+                    a_3 = div_2 % precision
                     out[i] = torch.tensor([a_1, a_2, a_3], device=DEVICE)*self.gauge - 1
+
                     i = i + 1
+
             return out.cpu().numpy()
         elif self.env_name == "cart":
             return _input.cpu().numpy()

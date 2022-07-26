@@ -14,7 +14,7 @@ class Policy:
     def select_action(self, n_p_o):
         t_p_o = torch.tensor(n_p_o, device=device, dtype=torch.float32)
         if self.policy == "DQN":
-            if random.random() < 0.98:
+            if random.random() < 0.95:
                 with torch.no_grad():
                     t_p_qsa = self.model(t_p_o)
                 t_a_index = torch.argmax(t_p_qsa)

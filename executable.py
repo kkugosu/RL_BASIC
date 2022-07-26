@@ -50,7 +50,7 @@ if __name__ == "__main__":
             print("we can't use DDPG")
         elif env_name == "hope":
             valid = 1
-            print("enter hopper precision")
+            print("enter hopper precision 3 or 5")
             precision = get_integer()
         else:
             print("error")
@@ -142,5 +142,5 @@ if __name__ == "__main__":
     else:
         print("error")
 
-    my_rend = render.Render(*arg_list)
+    my_rend = render.Render(policy, *arg_list)
     my_rend.rend()

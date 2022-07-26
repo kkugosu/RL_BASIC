@@ -31,7 +31,6 @@ class Simulate:
                     t = 0
                     break
             pause = t
-        print(n_a)
         self._reward_converter(dataset, dataloader)
 
     def _reward_converter(self, dataset, dataloader):

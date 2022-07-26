@@ -38,6 +38,8 @@ if __name__ == "__main__":
 
     env_name = None
     control = None
+    e_trace = 1
+    precision = 5
 
     valid = 0
     while valid == 0:
@@ -48,6 +50,8 @@ if __name__ == "__main__":
             print("we can't use DDPG")
         elif env_name == "hope":
             valid = 1
+            print("enter hopper precision")
+            precision = get_integer()
         else:
             print("error")
 
@@ -92,57 +96,51 @@ if __name__ == "__main__":
 
     print("load previous model 0 or 1")
     load_ = input("->")
-    e_trace = 1
+
+    arg_list = [BATCH_SIZE, CAPACITY, HIDDEN_SIZE, learning_rate,
+                TRAIN_ITER, MEMORY_ITER, control, env_name, e_trace, precision]
 
     if control == "PG":
         e_trace = 100
-        mechanism = PG.PGPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
-                                learning_rate, TRAIN_ITER, MEMORY_ITER, control, env_name, e_trace)
+        mechanism = PG.PGPolicy(*arg_list)
         mechanism.training(load=load_)
         policy = mechanism.get_policy()
 
     elif control == "DQN":
-        mechanism = DQN.DQNPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
-                                  learning_rate, TRAIN_ITER, MEMORY_ITER, control, env_name, e_trace)
+        mechanism = DQN.DQNPolicy(*arg_list)
+        mechanism.training(load=load_)
+        policy = mechanism.get_policy()
+
+    elif control == "AC":
+        mechanism = AC.ACPolicy(*arg_list)
         mechanism.training(load=load_)
         policy = mechanism.get_policy()
 
     elif control == "DDPG":
         if env_name == "hope":
-            mechanism = DDPG.DDPGPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
-                                        learning_rate, TRAIN_ITER, MEMORY_ITER, control, env_name, e_trace)
+            mechanism = DDPG.DDPGPolicy(*arg_list)
             mechanism.training(load=load_)
             policy = mechanism.get_policy()
         else:
             pass
 
     elif control == "TRPO":
-        mechanism = TRPO.TRPOPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
-                                    learning_rate, TRAIN_ITER, MEMORY_ITER, control, env_name, e_trace)
+        mechanism = TRPO.TRPOPolicy(*arg_list)
         mechanism.training(load=load_)
         policy = mechanism.get_policy()
 
     elif control == "PPO":
-        mechanism = PPO.PPOPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
-                                  learning_rate, TRAIN_ITER, MEMORY_ITER, control, env_name, e_trace)
+        mechanism = PPO.PPOPolicy(*arg_list)
         mechanism.training(load=load_)
         policy = mechanism.get_policy()
 
     elif control == "SAC":
-        mechanism = SAC.SACPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
-                                  learning_rate, TRAIN_ITER, MEMORY_ITER, control, env_name, e_trace)
-        mechanism.training(load=load_)
-        policy = mechanism.get_policy()
-
-    elif control == "AC":
-        mechanism = AC.ACPolicy(BATCH_SIZE, CAPACITY, HIDDEN_SIZE,
-                                learning_rate, TRAIN_ITER, MEMORY_ITER, control, env_name, e_trace)
+        mechanism = SAC.SACPolicy(*arg_list)
         mechanism.training(load=load_)
         policy = mechanism.get_policy()
 
     else:
         print("error")
 
-    my_rend = render.Render(policy, BATCH_SIZE, CAPACITY, HIDDEN_SIZE, learning_rate,
-                            TRAIN_ITER, MEMORY_ITER, control, env_name, e_trace)
+    my_rend = render.Render(*arg_list)
     my_rend.rend()

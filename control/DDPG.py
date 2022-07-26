@@ -14,13 +14,13 @@ GAMMA = 0.98
 class DDPGPolicy(BASE.BasePolicy):
     def __init__(self, *args) -> None:
         super().__init__(*args)
-        self.updatedPG = NN.ValueNN(self.o_s, self.h_s, self.a_s).to(self.device)
+        self.updatedPG = NN.HopeNN(self.o_s, self.h_s, self.a_s).to(self.device)
         self.updatedDQN = NN.ValueNN(self.o_s + self.a_s, self.h_s, 1).to(self.device)
         self.baseDQN = NN.ValueNN(self.o_s + self.a_s, self.h_s, 1).to(self.device)
         self.baseDQN.eval()
         self.policy = policy.Policy(self.cont, self.updatedPG, self.converter)
         self.buffer = buffer.Simulate(self.env, self.policy, step_size=self.e_trace)
-        self.optimizer_p = torch.optim.SGD(self.updatedPG.parameters(), lr=self.lr/10)
+        self.optimizer_p = torch.optim.SGD(self.updatedPG.parameters(), lr=self.lr/100)
         self.optimizer_q = torch.optim.SGD(self.updatedDQN.parameters(), lr=self.lr)
         self.criterion = nn.MSELoss(reduction='mean')
 
@@ -41,7 +41,6 @@ class DDPGPolicy(BASE.BasePolicy):
         i = 0
         while i < self.t_i:
             print(i)
-
             i = i + 1
             self.buffer.renewal_memory(self.ca, self.data, self.dataloader)
             pg_loss, dqn_loss = self.train_per_buff()
@@ -100,6 +99,7 @@ class DDPGPolicy(BASE.BasePolicy):
             self.optimizer_q.step()
 
             i = i + 1
+
         print("loss1 = ", policy_loss)
         print("loss2 = ", queue_loss)
 

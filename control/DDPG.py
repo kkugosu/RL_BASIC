@@ -18,7 +18,7 @@ class DDPGPolicy(BASE.BasePolicy):
         self.updatedDQN = NN.ValueNN(self.o_s + self.a_s, self.h_s, 1).to(self.device)
         self.baseDQN = NN.ValueNN(self.o_s + self.a_s, self.h_s, 1).to(self.device)
         self.baseDQN.eval()
-        self.policy = policy.Policy(self.cont, self.updatedPG, self.env_n)
+        self.policy = policy.Policy(self.cont, self.updatedPG, self.converter)
         self.buffer = buffer.Simulate(self.env, self.policy, step_size=self.e_trace)
         self.optimizer_p = torch.optim.SGD(self.updatedPG.parameters(), lr=self.lr/10)
         self.optimizer_q = torch.optim.SGD(self.updatedDQN.parameters(), lr=self.lr)

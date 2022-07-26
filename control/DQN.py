@@ -9,10 +9,10 @@ GAMMA = 0.98
 class DQNPolicy(BASE.BasePolicy):
     def __init__(self, *args) -> None:
         super().__init__(*args)
-        self.MainNetwork = NN.ValueNN(self.o_s, self.h_s, self.a_s).to(self.device)
-        self.baseDQN = NN.ValueNN(self.o_s, self.h_s, self.a_s).to(self.device)
+        self.MainNetwork = NN.ValueNN(self.o_s, self.h_s, self.a_index_s).to(self.device)
+        self.baseDQN = NN.ValueNN(self.o_s, self.h_s, self.a_index_s).to(self.device)
         self.baseDQN.eval()
-        self.policy = policy.Policy(self.cont, self.MainNetwork, self.env_n)
+        self.policy = policy.Policy(self.cont, self.MainNetwork, self.converter)
         self.buffer = buffer.Simulate(self.env, self.policy, step_size=self.e_trace)
         self.optimizer = torch.optim.SGD(self.MainNetwork.parameters(), lr=self.lr)
         self.criterion = nn.MSELoss(reduction='mean')

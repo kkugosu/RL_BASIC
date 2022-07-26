@@ -14,8 +14,8 @@ GAMMA = 0.98
 class PGPolicy(BASE.BasePolicy):
     def __init__(self, *args) -> None:
         super().__init__(*args)
-        self.updatedPG = NN.ProbNN(self.o_s, self.h_s, self.a_s).to(self.device)
-        self.policy = policy.Policy(self.cont, self.updatedPG, self.env_n)
+        self.updatedPG = NN.ProbNN(self.o_s, self.h_s, self.a_index_s).to(self.device)
+        self.policy = policy.Policy(self.cont, self.updatedPG, self.converter)
         self.buffer = buffer.Simulate(self.env, self.policy, step_size=self.e_trace)
         self.optimizer = torch.optim.SGD(self.updatedPG.parameters(), lr=self.lr)
 

@@ -68,5 +68,5 @@ class BasePolicy:
         
         self.data = dataset.SimData(capacity=self.ca)
         self.dataloader = dataloader.CustomDataLoader(self.data, batch_size=self.b_s)
-        self.converter = converter.Converter(self.env_n)
+        self.converter = converter.Converter(self.env_n, self.a_s, HOP_ACTION_SECTION)
         self.writer = SummaryWriter('Result/' + self.env_n + '/' + self.cont)

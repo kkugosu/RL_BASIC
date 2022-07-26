@@ -1,17 +1,14 @@
 import torch
 import random
-import numpy as np
-from utils import converter
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
 from torch import nn
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
 class Policy:
-    def __init__(self, policy, model, envname):
+    def __init__(self, policy, model, converter):
         self.policy = policy
         self.model = model
-        self.envname = envname
-        self.converter = converter.Converter(self.envname)
+        self.converter = converter
         self.softmax = nn.Softmax(dim=-1)
 
     def select_action(self, n_p_o):

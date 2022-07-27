@@ -85,7 +85,7 @@ if __name__ == "__main__":
     print("enter memory capacity recommend 1000")
     CAPACITY = get_integer()
 
-    print("memory reset time recommend 500")
+    print("memory reset time recommend 300")
     TRAIN_ITER = get_integer()
 
     print("train_iteration per memory recommend 20")

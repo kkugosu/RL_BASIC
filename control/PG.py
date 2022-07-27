@@ -40,6 +40,10 @@ class PGPolicy(BASE.BasePolicy):
             self.writer.add_scalar("pg/loss", loss, i)
             torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + '/1.pth')
 
+        for param in self.updatedPG.parameters():
+            print("----------pg--------------")
+            print(param)
+
         self.env.close()
         self.writer.flush()
         self.writer.close()

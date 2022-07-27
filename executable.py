@@ -76,22 +76,22 @@ if __name__ == "__main__":
         else:
             print("error")
 
-    print("enter HIDDEN_SIZE mostly 32")
+    print("enter HIDDEN_SIZE recommend 32")
     HIDDEN_SIZE = get_integer()
 
-    print("enter batchsize mostly 1000")
+    print("enter batchsize recommend 1000")
     BATCH_SIZE = get_integer()
 
-    print("enter memory capacity mostly 1000")
+    print("enter memory capacity recommend 1000")
     CAPACITY = get_integer()
 
-    print("memory reset time will be mostly 100")
+    print("memory reset time recommend 500")
     TRAIN_ITER = get_integer()
 
-    print("train_iteration per memory mostly 20")
+    print("train_iteration per memory recommend 20")
     MEMORY_ITER = get_integer()
 
-    print("enter learning rate mostly 0.01")
+    print("enter learning rate recommend 0.01")
     learning_rate = get_float()
 
     print("load previous model 0 or 1")

@@ -25,7 +25,6 @@ class PPOPolicy(BASE.BasePolicy):
         self.optimizer_p = torch.optim.SGD(self.updatedPG.parameters(), lr=self.lr/10)
         self.optimizer_q = torch.optim.SGD(self.updatedDQN.parameters(), lr=self.lr)
         self.criterion = nn.MSELoss(reduction='mean')
-        self.kl_loss = nn.KLDivLoss(reduction="mean")
 
     def get_policy(self):
         return self.policy
@@ -88,7 +87,7 @@ class PPOPolicy(BASE.BasePolicy):
             weight = torch.transpose(t_p_weight_clip, 0, 1)
 
             entropy_bonus = -torch.sum(torch.log(self.updatedPG(t_p_o))*self.updatedPG(t_p_o))/self.b_s
-            policy_loss = -torch.matmul(weight, t_p_qvalue) - entropy_bonus*0.1
+            policy_loss = -(torch.matmul(weight, t_p_qvalue)/self.b_s) - entropy_bonus*0.1
 
             with torch.no_grad():
                 n_a_expect = self.policy.select_action(n_o)

@@ -20,7 +20,7 @@ class ACPolicy(BASE.BasePolicy):
         self.baseDQN.eval()
         self.policy = policy.Policy(self.cont, self.updatedPG, self.converter)
         self.buffer = buffer.Simulate(self.env, self.policy, step_size=self.e_trace)
-        self.optimizer_p = torch.optim.SGD(self.updatedPG.parameters(), lr=self.lr/10)
+        self.optimizer_p = torch.optim.SGD(self.updatedPG.parameters(), lr=self.lr)
         self.optimizer_q = torch.optim.SGD(self.updatedDQN.parameters(), lr=self.lr)
         self.criterion = nn.MSELoss(reduction='mean')
 
@@ -77,7 +77,7 @@ class ACPolicy(BASE.BasePolicy):
             t_p_weight = torch.gather(self.updatedPG(t_p_o), 1, t_a_index)
             t_p_qvalue = torch.gather(self.updatedDQN(t_p_o), 1, t_a_index)
             weight = torch.transpose(torch.log(t_p_weight), 0, 1)
-            policy_loss = -torch.matmul(weight, t_p_qvalue)
+            policy_loss = -torch.matmul(weight, t_p_qvalue)/self.b_s
 
             with torch.no_grad():
                 n_a_expect = self.policy.select_action(n_o)

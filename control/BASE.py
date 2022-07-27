@@ -60,8 +60,8 @@ class BasePolicy:
         print("STATE_SIZE(input) = ", self.o_s)
 
         if self.env_n == "cart":
-            self.a_s = len(self.env.action_space.sample())
-            self.a_index_s = len(self.env.action_space.sample())
+            self.a_s = 2
+            self.a_index_s = 2
         else:
             self.a_s = len(self.env.action_space.sample())
             self.a_index_s = self.precision ** self.a_s

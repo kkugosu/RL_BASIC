@@ -35,6 +35,8 @@ class PGPolicy(BASE.BasePolicy):
             i = i + 1
             self.buffer.renewal_memory(self.ca, self.data, self.dataloader)
             loss = self.train_per_buff()
+            print(i)
+            print("loss = ", loss)
             self.writer.add_scalar("pg/loss", loss, i)
             torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + '/1.pth')
 
@@ -54,7 +56,7 @@ class PGPolicy(BASE.BasePolicy):
             t_p_weight = torch.gather(self.updatedPG(t_p_o), 1, t_a_index)
             weight = torch.log(t_p_weight)
             p_values = torch.transpose(t_r.unsqueeze(-1), 0, 1)
-            loss = -torch.matmul(p_values, weight)
+            loss = -torch.matmul(p_values, weight)/self.b_s
 
             self.optimizer.zero_grad()
             loss.backward()
@@ -62,6 +64,6 @@ class PGPolicy(BASE.BasePolicy):
                 param.grad.data.clamp_(-1, 1)
             self.optimizer.step()
             i = i + 1
-        print("loss = ", loss)
+
 
         return loss

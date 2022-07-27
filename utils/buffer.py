@@ -40,7 +40,7 @@ class Simulate:
         # set step to upper bound ex) step = 5 ->  4 3 2 1 5 5 4 3 2 1
         global_index = len(done) - 1
         local_index = 0
-        done_penalty = 2
+        done_penalty = 1
         while 0 <= global_index:
             if done[global_index] == 1:
                 local_index = 1

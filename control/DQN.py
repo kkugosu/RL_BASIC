@@ -34,8 +34,11 @@ class DQNPolicy(BASE.BasePolicy):
         self.buffer.renewal_memory(self.ca, self.data, self.dataloader)
         while i < self.t_i:
             i = i + 1
+            if i == 100:
+                self.optimizer = torch.optim.SGD(self.MainNetwork.parameters(), lr=self.lr/10)
             self.buffer.renewal_memory(self.ca, self.data, self.dataloader)
             loss = self.train_per_buf()
+            print(i)
             print(loss)
             self.writer.add_scalar("dqn/loss", loss, i)
             torch.save(self.MainNetwork.state_dict(), self.PARAM_PATH + '/1.pth')

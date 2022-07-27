@@ -84,7 +84,7 @@ class TRPOPolicy(BASE.BasePolicy):
             t_p_weight = torch.gather(self.updatedPG(t_p_o), 1, t_a_index)
             t_p_qvalue = torch.gather(self.updatedDQN(t_p_o), 1, t_a_index)
             weight = torch.transpose(torch.log(t_p_weight), 0, 1)
-            policy_loss = -torch.matmul(weight, t_p_qvalue)
+            policy_loss = -torch.matmul(weight, t_p_qvalue)/self.b_s
 
             with torch.no_grad():
                 n_a_expect = self.policy.select_action(n_o)

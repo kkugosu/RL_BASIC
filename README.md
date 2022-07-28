@@ -21,7 +21,7 @@ you can choose belows
 
 ![ezgif com-gif-maker(1)](https://user-images.githubusercontent.com/24292848/181578863-d4aea7cc-a683-46c5-a564-a75969065263.gif)
 
-result of "reward > 500"
+result of reward > 500
 
 ## Experiment environment
 

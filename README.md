@@ -17,6 +17,8 @@ you can choose belows
 * learning rate
 * load previous model or not (not = 0 yes = 1)
 
+https://user-images.githubusercontent.com/24292848/181577976-e51704bb-4ad4-434c-95e1-91dd04de4279.mp4
+
 ## Experiment environment
 
 * cartpole

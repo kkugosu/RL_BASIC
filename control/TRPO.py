@@ -117,7 +117,7 @@ class TRPOPolicy(BASE.BasePolicy):
             self.optimizer_p.step()
 
             i = i + 1
-        print("kld = ", kl_pg_loss)
+
         print("loss1 = ", policy_loss)
         print("loss2 = ", queue_loss)
 

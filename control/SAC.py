@@ -23,6 +23,8 @@ class SACPolicy(BASE.BasePolicy):
         self.optimizer_p = torch.optim.SGD(self.updatedPG.parameters(), lr=self.lr)
         self.optimizer_q = torch.optim.SGD(self.updatedDQN.parameters(), lr=self.lr)
         self.criterion = nn.MSELoss(reduction='mean')
+        self.kl_loss = nn.KLDivLoss(reduction="batchmean")
+        self.log_softmax = nn.LogSoftmax(dim=-1)
 
     def get_policy(self):
         return self.policy
@@ -75,16 +77,19 @@ class SACPolicy(BASE.BasePolicy):
             t_a_index = self.converter.act2index(n_a, self.b_s).unsqueeze(axis=-1)
             t_o = torch.tensor(n_o, dtype=torch.float32).to(self.device)
             t_r = torch.tensor(n_r, dtype=torch.float32).to(self.device)
-            t_p_weight = torch.gather(self.updatedPG(t_p_o), 1, t_a_index)
+            # t_p_weight = torch.gather(self.updatedPG(t_p_o), 1, t_a_index)
             t_p_qvalue = torch.gather(self.updatedDQN(t_p_o), 1, t_a_index)
-            policy_loss = torch.mean(torch.log(t_p_weight) - t_p_qvalue)
+            # policy_loss = torch.mean(torch.log(t_p_weight) - t_p_qvalue)
             # we already sampled according to policy
 
+            policy_loss = self.kl_loss(self.log_softmax(self.baseDQN(t_p_o)), self.updatedPG(t_p_o))
+
+            t_trace = torch.tensor(n_d, dtype=torch.float32).to(self.device)
             with torch.no_grad():
                 n_a_expect = self.policy.select_action(n_o)
                 t_a_index = self.converter.act2index(n_a_expect, self.b_s).unsqueeze(-1)
                 t_qvalue = torch.gather(self.baseDQN(t_o), 1, t_a_index)
-                t_qvalue = t_qvalue*(GAMMA**self.e_trace) + t_r.unsqueeze(-1)
+                t_qvalue = t_qvalue*(GAMMA**t_trace) + t_r.unsqueeze(-1)
 
             queue_loss = self.criterion(t_p_qvalue, t_qvalue)
 

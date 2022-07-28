@@ -17,8 +17,11 @@ you can choose belows
 * learning rate
 * load previous model or not (not = 0 yes = 1)
 
+## Example
+
 ![ezgif com-gif-maker(1)](https://user-images.githubusercontent.com/24292848/181578863-d4aea7cc-a683-46c5-a564-a75969065263.gif)
 
+result of "reward > 500"
 
 ## Experiment environment
 

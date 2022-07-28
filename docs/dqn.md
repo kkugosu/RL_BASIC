@@ -19,3 +19,5 @@ this network represent $ Q_\phi' value $
 
 update (nework_to_update) to reduce gap between Q(s,a2)(which is 2), reward(which is 5) + Q(s'a')(which is 5)
 this method can't guarantee convergence. because of max operation, this fomula try to converge infinity norm and L2 norm at the same time. this is impossible in general case
+
+![image](https://user-images.githubusercontent.com/24292848/181654349-dadf9857-6f49-457b-8af6-f19b2d2814b0.png)

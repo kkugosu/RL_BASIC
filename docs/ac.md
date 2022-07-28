@@ -26,3 +26,5 @@ $$ 4.\ \nabla_\theta J(\theta) \approx {1 \over N} \Sigma_i \nabla_\theta log \p
 $$ "you\ can\ pick\ a_i\ from\ current\ policy\ "$$
 
 $$ 5.\ \theta \leftarrow \theta + \alpha \nabla_\theta J (\theta) $$
+
+![image](https://user-images.githubusercontent.com/24292848/181654642-79fa4c1c-112a-4045-8a3e-5c6669c011d8.png)

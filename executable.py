@@ -97,7 +97,7 @@ if __name__ == "__main__":
     print("enter eligibility trace step, if pg: 100")
     e_trace = get_integer()
 
-    print("done penalty, recommend 3~10")
+    print("done penalty, if cartpole, recommend 10")
     done_penalty = get_integer()
 
     print("load previous model 0 or 1")
@@ -105,7 +105,7 @@ if __name__ == "__main__":
 
     arg_list = [BATCH_SIZE, CAPACITY, HIDDEN_SIZE, learning_rate,
                 TRAIN_ITER, MEMORY_ITER, control, env_name, e_trace, precision, done_penalty]
-
+    print(arg_list)
     if control == "PG":
         mechanism = PG.PGPolicy(*arg_list)
         mechanism.training(load=load_)

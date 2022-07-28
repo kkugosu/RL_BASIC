@@ -46,6 +46,7 @@ class DDPGPolicy(BASE.BasePolicy):
             pg_loss, dqn_loss = self.train_per_buff()
             self.writer.add_scalar("pg/loss", pg_loss, i)
             self.writer.add_scalar("dqn/loss", dqn_loss, i)
+            self.writer.add_scalar("performance", self.buffer.get_performance(), i)
             torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/1.pth")
             torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/2.pth')
             self.baseDQN.load_state_dict(self.updatedDQN.state_dict())

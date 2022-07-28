@@ -37,9 +37,13 @@ class DQNPolicy(BASE.BasePolicy):
             i = i + 1
             self.buffer.renewal_memory(self.ca, self.data, self.dataloader)
             loss = self.train_per_buf()
+            if loss < 1:
+                break
+
             print(i)
             print(loss)
             self.writer.add_scalar("dqn/loss", loss, i)
+            self.writer.add_scalar("performance", self.buffer.get_performance(), i)
             torch.save(self.MainNetwork.state_dict(), self.PARAM_PATH + '/1.pth')
             self.baseDQN.load_state_dict(self.MainNetwork.state_dict())
             self.baseDQN.eval()
@@ -69,6 +73,8 @@ class DQNPolicy(BASE.BasePolicy):
                 t_qvalue = t_qvalue + t_r
 
             loss = self.criterion(t_p_qvalue, t_qvalue.unsqueeze(axis=-1))
+            if loss < 1:
+                break
             self.optimizer.zero_grad()
             loss.backward()
             for param in self.MainNetwork.parameters():

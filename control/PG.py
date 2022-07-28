@@ -37,7 +37,10 @@ class PGPolicy(BASE.BasePolicy):
             loss = self.train_per_buff()
             print(i)
             print("loss = ", loss)
+            if loss[0][0] > 20:
+                break
             self.writer.add_scalar("pg/loss", loss, i)
+            self.writer.add_scalar("performance", self.buffer.get_performance(), i)
             torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + '/1.pth')
 
         for param in self.updatedPG.parameters():

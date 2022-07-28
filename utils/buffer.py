@@ -12,26 +12,34 @@ class Simulate:
         self.policy = policy
         self.step_size = step_size
         self.done_penalty = done_penalty
-        
+        self.performance = 0
+
     def renewal_memory(self, capacity, dataset, dataloader):
         total_num = 0
         pause = 0
-        memory_capacity = capacity
-        while total_num < memory_capacity - pause:
+        total_performance = 0
+        failure = 0
+        while total_num < capacity - pause:
             n_p_o = self.env.reset()
             t = 0
-            while t < memory_capacity - total_num: #if pg, gain accumulate
+            while t < capacity - total_num: #if pg, gain accumulate
                 n_a = self.policy.select_action(n_p_o)
                 n_o, n_r, n_d, n_i = self.env.step(n_a)
                 dataset.push(n_p_o, n_a, n_o, n_r, np.float32(n_d))
                 n_p_o = n_o
                 t = t + 1
+                total_performance = total_performance + n_r
                 if n_d:
                     total_num += t
                     t = 0
+                    failure = failure + 1
                     break
             pause = t
+        self.performance = total_performance/failure
         self._reward_converter(dataset, dataloader)
+
+    def get_performance(self):
+        return self.performance
 
     def _reward_converter(self, dataset, dataloader):
         t = 0

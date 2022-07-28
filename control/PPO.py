@@ -51,6 +51,7 @@ class PPOPolicy(BASE.BasePolicy):
             pg_loss, dqn_loss = self.train_per_buff()
             self.writer.add_scalar("pg/loss", pg_loss, i)
             self.writer.add_scalar("dqn/loss", dqn_loss, i)
+            self.writer.add_scalar("performance", self.buffer.get_performance(), i)
             torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/1.pth")
             torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/2.pth')
             self.baseDQN.load_state_dict(self.updatedDQN.state_dict())
@@ -82,7 +83,8 @@ class PPOPolicy(BASE.BasePolicy):
             t_r = torch.tensor(n_r, dtype=torch.float32).to(self.device)
             t_p_weight = torch.gather(self.updatedPG(t_p_o), 1, t_a_index)
             t_p_base_weight = torch.gather(self.basePG(t_p_o), 1, t_a_index)
-            t_p_weight_clip = torch.clamp(t_p_weight/t_p_base_weight, max=1.1)
+            ratio = t_p_weight/t_p_base_weight
+            t_p_weight_clip = torch.clamp(ratio, max=1.1)
             t_p_qvalue = torch.gather(self.updatedDQN(t_p_o), 1, t_a_index)
             weight = torch.transpose(t_p_weight_clip, 0, 1)
 

@@ -22,10 +22,10 @@ class TRPOPolicy(BASE.BasePolicy):
         self.baseDQN.eval()
         self.policy = policy.Policy(self.cont, self.updatedPG, self.converter)
         self.buffer = buffer.Simulate(self.env, self.policy, step_size=self.e_trace, done_penalty=self.d_p)
-        self.optimizer_p = torch.optim.SGD(self.updatedPG.parameters(), lr=self.lr/100)
+        self.optimizer_p = torch.optim.SGD(self.updatedPG.parameters(), lr=self.lr)
         self.optimizer_q = torch.optim.SGD(self.updatedDQN.parameters(), lr=self.lr)
         self.criterion = nn.MSELoss(reduction='mean')
-        self.kl_loss = nn.KLDivLoss(reduction="mean")
+        self.kl_loss = nn.KLDivLoss(reduction="batchmean")
 
     def get_policy(self):
         return self.policy
@@ -37,8 +37,8 @@ class TRPOPolicy(BASE.BasePolicy):
             self.updatedPG.load_state_dict(torch.load(self.PARAM_PATH + "/1.pth"))
             self.updatedDQN.load_state_dict(torch.load(self.PARAM_PATH + "/2.pth"))
             self.baseDQN.load_state_dict(self.updatedDQN.state_dict())
-            self.basePG.load_state_dict(self.updatedPG.state_dict())
             self.baseDQN.eval()
+            self.basePG.load_state_dict(self.updatedPG.state_dict())
             self.basePG.eval()
             print("loading complete")
         else:
@@ -52,11 +52,12 @@ class TRPOPolicy(BASE.BasePolicy):
             pg_loss, dqn_loss = self.train_per_buff()
             self.writer.add_scalar("pg/loss", pg_loss, i)
             self.writer.add_scalar("dqn/loss", dqn_loss, i)
+            self.writer.add_scalar("performance", self.buffer.get_performance(), i)
             torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/1.pth")
             torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/2.pth')
             self.baseDQN.load_state_dict(self.updatedDQN.state_dict())
-            self.basePG.load_state_dict(self.updatedPG.state_dict())
             self.baseDQN.eval()
+            self.basePG.load_state_dict(self.updatedPG.state_dict())
             self.basePG.eval()
 
         for param in self.updatedDQN.parameters():
@@ -101,7 +102,7 @@ class TRPOPolicy(BASE.BasePolicy):
             self.optimizer_p.step()
 
             self.optimizer_q.zero_grad()
-            queue_loss.backward(retain_graph=True)
+            queue_loss.backward()
             for param in self.updatedDQN.parameters():
                 param.grad.data.clamp_(-1, 1)
             self.optimizer_q.step()
@@ -116,7 +117,9 @@ class TRPOPolicy(BASE.BasePolicy):
             self.optimizer_p.step()
 
             i = i + 1
+        print("kld = ", kl_pg_loss)
         print("loss1 = ", policy_loss)
         print("loss2 = ", queue_loss)
 
         return policy_loss, queue_loss
+

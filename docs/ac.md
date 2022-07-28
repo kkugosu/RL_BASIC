@@ -27,4 +27,4 @@ $$ "you\ can\ pick\ a_i\ from\ current\ policy\ "$$
 
 $$ 5.\ \theta \leftarrow \theta + \alpha \nabla_\theta J (\theta) $$
 
-![image](https://user-images.githubusercontent.com/24292848/181654642-79fa4c1c-112a-4045-8a3e-5c6669c011d8.png)
+![image](https://user-images.githubusercontent.com/24292848/181654674-5e2d6069-2e16-4ffd-8ae9-017d10cac78b.png)

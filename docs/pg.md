@@ -11,3 +11,5 @@ $$ 3 \. \ \theta \leftarrow \theta \  \dotplus \alpha \nabla_\theta J ( \theta )
 
 
 <img width="647" alt="스크린샷 2022-05-23 오후 8 14 51" src="https://user-images.githubusercontent.com/24292848/169807378-9496b69c-bbec-4a45-ad6f-31b0215797ab.png">
+
+![image](https://user-images.githubusercontent.com/24292848/181654505-676cb590-a0da-4ba1-ade0-e02ce3ce4801.png)

@@ -84,7 +84,8 @@ class SACPolicy(BASE.BasePolicy):
 
             policy_loss = self.kl_loss(self.log_softmax(self.baseDQN(t_p_o)), self.updatedPG(t_p_o))
 
-            t_trace = torch.tensor(n_d, dtype=torch.float32).to(self.device)
+            t_trace = torch.tensor(n_d, dtype=torch.float32).to(self.device).unsqueeze(-1)
+
             with torch.no_grad():
                 n_a_expect = self.policy.select_action(n_o)
                 t_a_index = self.converter.act2index(n_a_expect, self.b_s).unsqueeze(-1)

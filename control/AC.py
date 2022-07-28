@@ -79,7 +79,7 @@ class ACPolicy(BASE.BasePolicy):
             t_p_qvalue = torch.gather(self.updatedDQN(t_p_o), 1, t_a_index)
             weight = torch.transpose(torch.log(t_p_weight), 0, 1)
             policy_loss = -torch.matmul(weight, t_p_qvalue)/self.b_s
-            t_trace = torch.tensor(n_d, dtype=torch.float32).to(self.device)
+            t_trace = torch.tensor(n_d, dtype=torch.float32).to(self.device).unsqueeze(-1)
 
             with torch.no_grad():
                 n_a_expect = self.policy.select_action(n_o)

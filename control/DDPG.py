@@ -78,12 +78,13 @@ class DDPGPolicy(BASE.BasePolicy):
             t_p_qvalue = self.updatedDQN(dqn_input)
             dqn_input_req_grad = torch.cat((t_p_o, self.updatedPG(t_p_o)), dim=-1)
             policy_loss = - torch.mean(self.updatedDQN(dqn_input_req_grad))
+            t_trace = torch.tensor(n_d, dtype=torch.float32).to(self.device).unsqueeze(-1)
 
             with torch.no_grad():
                 n_a_expect = self.policy.select_action(n_o)
                 t_a_expect = torch.tensor(n_a_expect).to(self.device)
                 dqn_input = torch.cat((t_o, t_a_expect), dim=-1)
-                t_qvalue = dqn_input*(GAMMA**self.e_trace) + t_r.unsqueeze(-1)
+                t_qvalue = self.baseDQN(dqn_input)*(GAMMA**t_trace) + t_r.unsqueeze(-1)
 
             queue_loss = self.criterion(t_p_qvalue, t_qvalue)
 

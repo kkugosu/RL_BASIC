@@ -93,12 +93,13 @@ class PPOPolicy(BASE.BasePolicy):
             # so we add action kld term like trpo
             state_entropy_bonus = -torch.sum(torch.log(self.updatedPG(t_p_o)) * self.updatedPG(t_p_o)) / self.b_s
             policy_loss = -torch.matmul(weight, t_p_qvalue)/self.b_s - state_entropy_bonus*0.1
+            t_trace = torch.tensor(n_d, dtype=torch.float32).to(self.device).unsqueeze(-1)
 
             with torch.no_grad():
                 n_a_expect = self.policy.select_action(n_o)
                 t_a_index = self.converter.act2index(n_a_expect, self.b_s).unsqueeze(-1)
                 t_qvalue = torch.gather(self.baseDQN(t_o), 1, t_a_index)
-                t_qvalue = t_qvalue*(GAMMA**self.e_trace) + t_r.unsqueeze(-1)
+                t_qvalue = t_qvalue*(GAMMA**t_trace) + t_r.unsqueeze(-1)
 
             queue_loss = self.criterion(t_p_qvalue, t_qvalue)
 

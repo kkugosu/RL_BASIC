@@ -27,3 +27,5 @@ in implementation, we can just add kld term to loss
 
 # but when we backporpagate kld and objective at the same time, gradient of kld always 0 so kld term loss the meaning. 
 so i backpropagate twice, first by objective and second by kld.
+
+![image](https://user-images.githubusercontent.com/24292848/181654772-e5f6df53-052b-4cd8-887a-cb63e774a9ac.png)

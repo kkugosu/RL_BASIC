@@ -26,3 +26,5 @@ $$ 3.\psi \leftarrow \psi - \lambda_V \nabla_\psi J_V(\psi)$$
 $$ 4.\theta \leftarrow \theta - \lambda_Q \nabla_\theta J_Q(\theta)$$
 
 $$ 5.\phi \leftarrow \phi - \lambda_\pi \nabla_\phi J_\pi(\phi)$$
+
+![image](https://user-images.githubusercontent.com/24292848/181655021-3bf80d55-5642-484a-9c25-8b1769a7a824.png)

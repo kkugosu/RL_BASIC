@@ -17,7 +17,8 @@ you can choose belows
 * learning rate
 * load previous model or not (not = 0 yes = 1)
 
-![ezgif com-gif-maker](https://user-images.githubusercontent.com/24292848/181578555-d2964c9c-7d68-4ffb-b44d-60c933a9beea.gif)
+![ezgif com-gif-maker(1)](https://user-images.githubusercontent.com/24292848/181578863-d4aea7cc-a683-46c5-a564-a75969065263.gif)
+
 
 ## Experiment environment
 

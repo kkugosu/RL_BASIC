@@ -3,6 +3,7 @@ import torch
 from NeuralNetwork import NN
 from utils import buffer
 from torch import nn
+import numpy as np
 GAMMA = 0.98
 
 
@@ -13,7 +14,7 @@ class DQNPolicy(BASE.BasePolicy):
         self.baseDQN = NN.ValueNN(self.o_s, self.h_s, self.a_index_s).to(self.device)
         self.baseDQN.eval()
         self.policy = policy.Policy(self.cont, self.MainNetwork, self.converter)
-        self.buffer = buffer.Simulate(self.env, self.policy, step_size=self.e_trace)
+        self.buffer = buffer.Simulate(self.env, self.policy, step_size=self.e_trace, done_penalty=self.d_p)
         self.optimizer = torch.optim.SGD(self.MainNetwork.parameters(), lr=self.lr)
         self.criterion = nn.MSELoss(reduction='mean')
 
@@ -61,11 +62,12 @@ class DQNPolicy(BASE.BasePolicy):
             t_o = torch.tensor(n_o, dtype=torch.float32).to(self.device)
             t_r = torch.tensor(n_r, dtype=torch.float32).to(self.device)
             t_p_qvalue = torch.gather(self.MainNetwork(t_p_o), 1, t_a_index)
-
+            t_trace = torch.tensor(n_d, dtype=torch.float32).to(self.device)
             with torch.no_grad():
                 t_qvalue = self.baseDQN(t_o)
-                t_qvalue = torch.max(t_qvalue, dim=1)[0] * (GAMMA**self.e_trace)
+                t_qvalue = torch.max(t_qvalue, dim=1)[0] * (GAMMA**t_trace)
                 t_qvalue = t_qvalue + t_r
+
             loss = self.criterion(t_p_qvalue, t_qvalue.unsqueeze(axis=-1))
             self.optimizer.zero_grad()
             loss.backward()

@@ -2,17 +2,17 @@ import torch
 import random
 import numpy as np
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
 GAMMA = 0.98
 
 
 class Simulate:
 
-    def __init__(self, env, policy, step_size):
+    def __init__(self, env, policy, step_size, done_penalty):
         self.env = env
         self.policy = policy
         self.step_size = step_size
-
+        self.done_penalty = done_penalty
+        
     def renewal_memory(self, capacity, dataset, dataloader):
         total_num = 0
         pause = 0
@@ -40,12 +40,11 @@ class Simulate:
         # set step to upper bound ex) step = 5 ->  4 3 2 1 5 5 4 3 2 1
         global_index = len(done) - 1
         local_index = 0
-        done_penalty = 1
         while 0 <= global_index:
             if done[global_index] == 1:
                 local_index = 1
                 done[global_index] = local_index
-                reward[global_index] -= done_penalty
+                reward[global_index] -= self.done_penalty
             else:
                 local_index = local_index + 1
                 if local_index > self.step_size:

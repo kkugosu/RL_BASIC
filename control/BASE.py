@@ -28,7 +28,8 @@ class BasePolicy:
                  cont,
                  env_n,
                  e_trace,
-                 precision
+                 precision,
+                 d_p
                  ):
         self.b_s = b_s
         self.ca = ca
@@ -41,6 +42,7 @@ class BasePolicy:
         self.e_trace = e_trace
         self.precision = precision
         self.device = DEVICE
+        self.d_p = d_p
 
         self.PARAM_PATH = 'Parameter/' + self.env_n + self.cont
         print("parameter path is " + self.PARAM_PATH)

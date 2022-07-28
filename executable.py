@@ -85,23 +85,28 @@ if __name__ == "__main__":
     print("enter memory capacity recommend 1000")
     CAPACITY = get_integer()
 
-    print("memory reset time recommend 300")
+    print("memory reset time recommend 100")
     TRAIN_ITER = get_integer()
 
-    print("train_iteration per memory recommend 20")
+    print("train_iteration per memory recommend 10")
     MEMORY_ITER = get_integer()
 
     print("enter learning rate recommend 0.01")
     learning_rate = get_float()
 
+    print("enter eligibility trace step, if pg: 100")
+    e_trace = get_integer()
+
+    print("done penalty, recommend 3~10")
+    done_penalty = get_integer()
+
     print("load previous model 0 or 1")
     load_ = input("->")
 
     arg_list = [BATCH_SIZE, CAPACITY, HIDDEN_SIZE, learning_rate,
-                TRAIN_ITER, MEMORY_ITER, control, env_name, e_trace, precision]
+                TRAIN_ITER, MEMORY_ITER, control, env_name, e_trace, precision, done_penalty]
 
     if control == "PG":
-        e_trace = 100
         mechanism = PG.PGPolicy(*arg_list)
         mechanism.training(load=load_)
         policy = mechanism.get_policy()

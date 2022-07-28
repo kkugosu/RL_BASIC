@@ -16,7 +16,7 @@ class PGPolicy(BASE.BasePolicy):
         super().__init__(*args)
         self.updatedPG = NN.ProbNN(self.o_s, self.h_s, self.a_index_s).to(self.device)
         self.policy = policy.Policy(self.cont, self.updatedPG, self.converter)
-        self.buffer = buffer.Simulate(self.env, self.policy, step_size=self.e_trace)
+        self.buffer = buffer.Simulate(self.env, self.policy, step_size=self.e_trace, done_penalty=self.d_p)
         self.optimizer = torch.optim.SGD(self.updatedPG.parameters(), lr=self.lr)
 
     def get_policy(self):
@@ -68,6 +68,5 @@ class PGPolicy(BASE.BasePolicy):
                 param.grad.data.clamp_(-1, 1)
             self.optimizer.step()
             i = i + 1
-
 
         return loss

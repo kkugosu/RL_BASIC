@@ -15,6 +15,8 @@ you can choose belows
 * memory reset time
 * train time per memory
 * learning rate
+* eligibility trace
+* done penalty
 * load previous model or not (not = 0 yes = 1)
 
 ## Example

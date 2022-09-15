@@ -4,7 +4,7 @@ import torch
 import numpy as np
 import sys
 from torch import nn
-from NeuralNetwork import NN
+from NeuralNetwork import basic_nn
 from utils import buffer
 import random
 import torch.onnx as onnx
@@ -14,9 +14,9 @@ GAMMA = 0.98
 class DDPGPolicy(BASE.BasePolicy):
     def __init__(self, *args) -> None:
         super().__init__(*args)
-        self.updatedPG = NN.HopeNN(self.o_s, self.h_s, self.a_s).to(self.device)
-        self.updatedDQN = NN.ValueNN(self.o_s + self.a_s, self.h_s, 1).to(self.device)
-        self.baseDQN = NN.ValueNN(self.o_s + self.a_s, self.h_s, 1).to(self.device)
+        self.updatedPG = basic_nn.HopeNN(self.o_s, self.h_s, self.a_s).to(self.device)
+        self.updatedDQN = basic_nn.ValueNN(self.o_s + self.a_s, self.h_s, 1).to(self.device)
+        self.baseDQN = basic_nn.ValueNN(self.o_s + self.a_s, self.h_s, 1).to(self.device)
         self.baseDQN.eval()
         self.policy = policy.Policy(self.cont, self.updatedPG, self.converter)
         self.buffer = buffer.Simulate(self.env, self.policy, step_size=self.e_trace, done_penalty=self.d_p)

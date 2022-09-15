@@ -1,7 +1,7 @@
 import torch
 import random
 import numpy as np
-from NeuralNetwork import NN
+from NeuralNetwork import basic_nn
 from control import BASE
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 

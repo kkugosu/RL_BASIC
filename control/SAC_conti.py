@@ -1,4 +1,4 @@
-from policy import BASE
+from control import BASE
 import torch
 import numpy as np
 from torch import nn
@@ -10,11 +10,10 @@ GAMMA = 0.98
 class SACPolicy(BASE.BasePolicy):
     def __init__(self, *args) -> None:
         super().__init__(*args)
-        self.upd_policy = basic_nn.ValueNN(self.s_l*self.sk_n, self.s_l*self.sk_n,
-                                           self.a_l**2 + self.a_l).to(self.device)
-        self.NAF_policy = converter.NAFPolicy(self.s_l*self.sk_n, self.a_l, self.upd_policy)
-        self.upd_queue = basic_nn.ValueNN((self.s_l + self.a_l)*self.sk_n, self.s_l*self.sk_n, 1).to(self.device)
-        self.base_queue = basic_nn.ValueNN((self.s_l + self.a_l)*self.sk_n, self.s_l*self.sk_n, 1).to(self.device)
+        self.upd_policy = basic_nn.ValueNN(self.s_l, self.s_l, self.a_l**2 + self.a_l).to(self.device)
+        self.NAF_policy = converter.NAFPolicy(self.s_l, self.a_l, self.upd_policy)
+        self.upd_queue = basic_nn.ValueNN((self.s_l + self.a_l), self.s_l, 1).to(self.device)
+        self.base_queue = basic_nn.ValueNN((self.s_l + self.a_l), self.s_l, 1).to(self.device)
         self.optimizer_p = torch.optim.SGD(self.upd_policy.parameters(), lr=self.l_r)
         self.optimizer_q = torch.optim.SGD(self.upd_queue.parameters(), lr=self.l_r)
         self.criterion = nn.MSELoss(reduction='mean')

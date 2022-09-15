@@ -1,6 +1,6 @@
 from control import BASE, policy
 import torch
-from NeuralNetwork import NN
+from NeuralNetwork import basic_nn
 from utils import buffer
 from torch import nn
 import numpy as np
@@ -10,8 +10,8 @@ GAMMA = 0.98
 class DQNPolicy(BASE.BasePolicy):
     def __init__(self, *args) -> None:
         super().__init__(*args)
-        self.MainNetwork = NN.ValueNN(self.o_s, self.h_s, self.a_index_s).to(self.device)
-        self.baseDQN = NN.ValueNN(self.o_s, self.h_s, self.a_index_s).to(self.device)
+        self.MainNetwork = basic_nn.ValueNN(self.o_s, self.h_s, self.a_index_s).to(self.device)
+        self.baseDQN = basic_nn.ValueNN(self.o_s, self.h_s, self.a_index_s).to(self.device)
         self.baseDQN.eval()
         self.policy = policy.Policy(self.cont, self.MainNetwork, self.converter)
         self.buffer = buffer.Simulate(self.env, self.policy, step_size=self.e_trace, done_penalty=self.d_p)

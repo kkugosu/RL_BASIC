@@ -1,5 +1,6 @@
-from control import DQN, PG, AC, DDPG, SAC, TRPO, PPO
+from control import DQN, PG, AC, DDPG, SAC, TRPO, PPO, SAC_conti
 from utils import render
+from simple_env import wallplane, plane, narrow
 
 if __name__ == "__main__":
 
@@ -43,6 +44,23 @@ if __name__ == "__main__":
 
     valid = 0
     while valid == 0:
+        print("enter envname, {wallplane, plane, narrow}")
+        env_name = "wallplane" #input("->")
+        if env_name == "wallplane":
+            valid = 1
+
+        elif env_name == "plane":
+            valid = 1
+
+        elif env_name == "narrow":
+            valid = 1
+
+        else:
+            print("error")
+
+    """
+    valid = 0
+    while valid == 0:
         print("enter envname, {cartpole as cart, hoppper as hope}")
         env_name = input("->")
         if env_name == "cart":
@@ -54,11 +72,13 @@ if __name__ == "__main__":
             precision = get_integer()
         else:
             print("error")
+    """
+
 
     valid = 0
     while valid == 0:
         print("enter RL control, {PG, DQN, AC, TRPO, PPO, DDPG, SAC}")
-        control = input("->")
+        control = "SAC_conti" # input("->")
         if control == "PG":
             valid = 1
         elif control == "DQN":
@@ -72,6 +92,8 @@ if __name__ == "__main__":
         elif control == "DDPG":
             valid = 1
         elif control == "SAC":
+            valid = 1
+        elif control == "SAC_conti":
             valid = 1
         else:
             print("error")
@@ -142,6 +164,11 @@ if __name__ == "__main__":
     elif control == "SAC":
         mechanism = SAC.SACPolicy(*arg_list)
         mechanism.training(load=load_)
+        policy = mechanism.get_policy()
+
+    elif control == "SAC_conti":
+        mechanism = SAC_conti.SACPolicy(*arg_list)
+        mechanism.update(load=load_)
         policy = mechanism.get_policy()
 
     else:

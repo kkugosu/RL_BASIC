@@ -2,6 +2,7 @@ import random
 import numpy as np
 import torch
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
+from torch.distributions.multivariate_normal import MultivariateNormal
 
 
 class Converter:
@@ -76,5 +77,28 @@ class Converter:
             print("converter error")
 
 
+class NAFPolicy:
+    def __init__(self, sl, al, policy):
+        self.sl = sl
+        self.al = al
+        self.policy = policy
+
+    def prob(self, state):
+        pre_psd, mean = torch.split(self.policy(state), [self.al**2, self.al], dim=-1)
+        # print("prepse = ", pre_psd)
+        # print("mean = ", mean)
+        pre_psd = torch.reshape(pre_psd, (-1, self.al, self.al)).squeeze()
+        pre_psd_trans = torch.transpose(pre_psd, -2, -1)
+        psd = torch.matmul(pre_psd, pre_psd_trans)
+        # psd = cov matrix
+        # print(mean)
+        # print(psd)
+        try:
+            normal = MultivariateNormal(mean, psd)
+            return mean, psd, normal.sample()
+        except ValueError:
+            normal = MultivariateNormal(mean, psd + 0.0001)
+            return mean, psd + 0.0001, normal.sample()
+        # psd = psd no exception occered
 
 

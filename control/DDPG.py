@@ -14,14 +14,14 @@ GAMMA = 0.98
 class DDPGPolicy(BASE.BasePolicy):
     def __init__(self, *args) -> None:
         super().__init__(*args)
-        self.updatedPG = basic_nn.HopeNN(self.o_s, self.h_s, self.a_s).to(self.device)
+        self.updatedPG = basic_nn.ValueNN(self.o_s, self.h_s, self.a_s).to(self.device)
         self.updatedDQN = basic_nn.ValueNN(self.o_s + self.a_s, self.h_s, 1).to(self.device)
         self.baseDQN = basic_nn.ValueNN(self.o_s + self.a_s, self.h_s, 1).to(self.device)
         self.baseDQN.eval()
         self.policy = policy.Policy(self.cont, self.updatedPG, self.converter)
         self.buffer = buffer.Simulate(self.env, self.policy, step_size=self.e_trace, done_penalty=self.d_p)
-        self.optimizer_p = torch.optim.SGD(self.updatedPG.parameters(), lr=self.lr/100)
-        self.optimizer_q = torch.optim.SGD(self.updatedDQN.parameters(), lr=self.lr)
+        self.optimizer_p = torch.optim.SGD(self.updatedPG.parameters(), lr=self.lr, weight_decay=0.1)
+        self.optimizer_q = torch.optim.SGD(self.updatedDQN.parameters(), lr=self.lr, weight_decay=0.1)
         self.criterion = nn.MSELoss(reduction='mean')
 
     def get_policy(self):
@@ -74,10 +74,18 @@ class DDPGPolicy(BASE.BasePolicy):
             t_a = torch.tensor(n_a, dtype=torch.float32).to(self.device)
             t_o = torch.tensor(n_o, dtype=torch.float32).to(self.device)
             t_r = torch.tensor(n_r, dtype=torch.float32).to(self.device)
+            #print("state = ",t_p_o.size())
+            #print(t_p_o)
+            #print("action = ",t_a.size())
+            #print(t_a)
+            #print("reward = ",t_o.size())
+            #print(t_o)
+            #print("reward = ", t_r.size())
+            #print(t_r)
             dqn_input = torch.cat((t_p_o, t_a), dim=-1)
             t_p_qvalue = self.updatedDQN(dqn_input)
             dqn_input_req_grad = torch.cat((t_p_o, self.updatedPG(t_p_o)), dim=-1)
-            policy_loss = - torch.mean(self.updatedDQN(dqn_input_req_grad))
+            policy_loss = - torch.mean(self.baseDQN(dqn_input_req_grad))
             t_trace = torch.tensor(n_d, dtype=torch.float32).to(self.device).unsqueeze(-1)
 
             with torch.no_grad():

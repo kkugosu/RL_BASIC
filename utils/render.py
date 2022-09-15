@@ -14,19 +14,17 @@ class Render(BASE.BasePolicy):
     def rend(self):
         n_p_o = self.env.reset()
         t = 0
-        local = 0
         total_performance = 0
         fail_time = 0
         while t < 1000:
             n_a = self.policy.select_action(n_p_o)
-            n_o, n_r, n_d, info = self.env.step(n_a)
+            n_o, n_r, info = self.env.step(n_a)
             total_performance = total_performance + n_r
             n_p_o = n_o
             self.env.render()
             t = t + 1
-            local = local + 1
-            if n_d:
-                print("Episode finished after {} timesteps".format(local+1))
+            if t % 200 == 0:
+                print("Episode finished after {} timesteps".format(t))
                 fail_time = fail_time + 1
                 local = 0
                 self.env.reset()

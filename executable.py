@@ -99,22 +99,22 @@ if __name__ == "__main__":
             print("error")
 
     print("enter HIDDEN_SIZE recommend 32")
-    HIDDEN_SIZE = 32 # get_integer()
+    HIDDEN_SIZE = 8 # get_integer()
 
     print("enter batchsize recommend 1000")
-    BATCH_SIZE = 1000 # get_integer()
+    BATCH_SIZE = 200 # get_integer()
 
     print("enter memory capacity recommend 1000")
-    CAPACITY = 1000 # get_integer()
+    CAPACITY = 200 # get_integer()
 
     print("memory reset time recommend 100")
-    TRAIN_ITER = 100 # get_integer()
+    TRAIN_ITER = 500 # get_integer()
 
     print("train_iteration per memory recommend 10")
     MEMORY_ITER = 1 # get_integer()
 
     print("enter learning rate recommend 0.01")
-    learning_rate = 0.01 # get_float()
+    learning_rate = 0.03 # get_float()
 
     print("enter eligibility trace step, if pg: 100")
     e_trace = 1 # get_integer()

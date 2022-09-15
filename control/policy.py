@@ -1,7 +1,7 @@
 import torch
 import random
 from torch import nn
-
+from numpy import random
 import numpy as np
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -58,7 +58,7 @@ class Policy:
 
         elif self.policy == "DDPG":
             with torch.no_grad():
-                t_a = self.model(t_p_o)
+                t_a = self.model(t_p_o) + torch.from_numpy((random.rand(2)-0.5)/2).type(torch.float32)
             n_a = t_a.cpu().numpy()
             n_a_d = np.sqrt(np.sum(n_a ** 2))
             n_a = n_a / n_a_d

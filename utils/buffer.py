@@ -18,7 +18,7 @@ class Simulate:
         total_num = 0
         pause = 0
         failure = 1
-        traj_l = 200
+        traj_l = capacity/10
 
         while len(dataset) != 0:
             dataset.pop()

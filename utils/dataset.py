@@ -16,3 +16,6 @@ class SimData(Dataset):
 
     def push(self, *args):
         self.memory.append(Transition(*args))
+
+    def pop(self):
+        self.memory.pop()

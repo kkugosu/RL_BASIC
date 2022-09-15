@@ -78,7 +78,7 @@ if __name__ == "__main__":
     valid = 0
     while valid == 0:
         print("enter RL control, {PG, DQN, AC, TRPO, PPO, DDPG, SAC}")
-        control = "SAC_conti" # input("->")
+        control = "DDPG" # input("->")
         if control == "PG":
             valid = 1
         elif control == "DQN":
@@ -99,31 +99,31 @@ if __name__ == "__main__":
             print("error")
 
     print("enter HIDDEN_SIZE recommend 32")
-    HIDDEN_SIZE = get_integer()
+    HIDDEN_SIZE = 32 # get_integer()
 
     print("enter batchsize recommend 1000")
-    BATCH_SIZE = get_integer()
+    BATCH_SIZE = 1000 # get_integer()
 
     print("enter memory capacity recommend 1000")
-    CAPACITY = get_integer()
+    CAPACITY = 1000 # get_integer()
 
     print("memory reset time recommend 100")
-    TRAIN_ITER = get_integer()
+    TRAIN_ITER = 100 # get_integer()
 
     print("train_iteration per memory recommend 10")
-    MEMORY_ITER = get_integer()
+    MEMORY_ITER = 1 # get_integer()
 
     print("enter learning rate recommend 0.01")
-    learning_rate = get_float()
+    learning_rate = 0.01 # get_float()
 
     print("enter eligibility trace step, if pg: 100")
-    e_trace = get_integer()
+    e_trace = 1 # get_integer()
 
     print("done penalty, if cartpole, recommend 10")
-    done_penalty = get_integer()
+    done_penalty = 1 # get_integer()
 
     print("load previous model 0 or 1")
-    load_ = input("->")
+    load_ = 0 # input("->")
 
     arg_list = [BATCH_SIZE, CAPACITY, HIDDEN_SIZE, learning_rate,
                 TRAIN_ITER, MEMORY_ITER, control, env_name, e_trace, precision, done_penalty]
@@ -144,12 +144,12 @@ if __name__ == "__main__":
         policy = mechanism.get_policy()
 
     elif control == "DDPG":
-        if env_name == "hope":
+        if env_name == "cart":
+            pass
+        else:
             mechanism = DDPG.DDPGPolicy(*arg_list)
             mechanism.training(load=load_)
             policy = mechanism.get_policy()
-        else:
-            pass
 
     elif control == "TRPO":
         mechanism = TRPO.TRPOPolicy(*arg_list)

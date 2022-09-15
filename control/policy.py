@@ -1,6 +1,8 @@
 import torch
 import random
 from torch import nn
+
+import numpy as np
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
@@ -44,10 +46,23 @@ class Policy:
             n_a = self.converter.index2act(t_a_index.squeeze(-1), 1)
             return n_a
 
+        elif self.policy == "SAC_conti":
+            with torch.no_grad():
+
+                mean, cov, t_a = self.model.prob(t_p_o)
+            n_a = t_a.cpu().numpy()
+            n_a_d = np.sqrt(np.sum(n_a ** 2))
+            n_a = n_a / n_a_d
+
+            return n_a
+
         elif self.policy == "DDPG":
             with torch.no_grad():
                 t_a = self.model(t_p_o)
             n_a = t_a.cpu().numpy()
+            n_a_d = np.sqrt(np.sum(n_a ** 2))
+            n_a = n_a / n_a_d
+
             return n_a
 
         else:

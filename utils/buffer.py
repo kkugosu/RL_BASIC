@@ -17,26 +17,68 @@ class Simulate:
     def renewal_memory(self, capacity, dataset, dataloader):
         total_num = 0
         pause = 0
-        total_performance = 0
-        failure = 0
-        while total_num < capacity - pause:
-            n_p_o = self.env.reset()
-            t = 0
-            while t < capacity - total_num: #if pg, gain accumulate
-                n_a = self.policy.select_action(n_p_o)
-                n_o, n_r, n_d, n_i = self.env.step(n_a)
-                dataset.push(n_p_o, n_a, n_o, n_r, np.float32(n_d))
-                n_p_o = n_o
-                t = t + 1
-                total_performance = total_performance + n_r
-                if n_d:
-                    total_num += t
-                    t = 0
-                    failure = failure + 1
-                    break
-            pause = t
-        self.performance = total_performance/failure
+        failure = 1
+        traj_l = 200
+
+        while len(dataset) != 0:
+            dataset.pop()
+        if traj_l != 0:
+            _index = 0
+            circular = 1
+            while total_num < capacity:
+
+                n_p_s = self.env.reset()
+                t = 0
+                while t < capacity - total_num: # if pg, gain accumulate
+
+                    with torch.no_grad():
+                        n_a = self.policy.select_action(n_p_s)
+                    # n_s, n_r, n_i = self.env.step(n_a[_index*self.a_l:(_index+1)*self.a_l])
+                    n_s, n_r, n_i = self.env.step(n_a)
+                    if (t+1) == traj_l:
+                        done = 1
+                    else:
+                        done = 0
+                    # self.dataset.push(n_p_s, n_a, n_s, t, done, _index)
+                    dataset.push(n_p_s, n_a, n_s, n_r, done)
+                    # we need index.. so have to convert dataset
+                    n_p_s = n_s
+                    t = t + 1
+                    if t == traj_l:
+
+                        if circular == 1:
+                            _index = _index + 1
+                        total_num += t
+                        t = 0
+                        failure = failure + 1
+                        break
+        else:
+            while total_num < capacity - pause:
+
+                _index = 0
+                n_p_s = self.env.reset()
+                t = 0
+                while t < capacity - total_num: # if pg, gain accumulate
+                    with torch.no_grad():
+                        n_a = self.policy.select_action(n_p_s)
+                    n_s, n_r, n_d, n_i = self.env.step(n_a)
+                    dataset.push(n_p_s, n_a, n_s, n_r, np.float32(n_d))
+                    # we need index.. so have to convert dataset
+                    n_p_s = n_s
+                    t = t + 1
+                    if n_d:
+                        total_num += t
+                        t = 0
+                        failure = failure + 1
+                        break
+                pause = t
+
+        pre_observation, action, observation, reward, done = next(iter(dataloader))
+
+        total_performance = np.sum(reward)
+        self.performance = total_performance / failure
         self._reward_converter(dataset, dataloader)
+        return self.performance
 
     def get_performance(self):
         return self.performance

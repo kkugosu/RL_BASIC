@@ -7,14 +7,15 @@ GAMMA = 0.98
 
 class Simulate:
 
-    def __init__(self, env, policy, step_size, done_penalty):
+    def __init__(self, env, policy, step_size, done_penalty, name):
         self.env = env
         self.policy = policy
         self.step_size = step_size
         self.done_penalty = done_penalty
         self.performance = 0
+        self.policy_name = name
 
-    def renewal_memory(self, capacity, dataset, dataloader):
+    def renewal_memory(self, capacity, dataset, dataloader, rew):
         total_num = 0
         pause = 0
         failure = 1
@@ -77,6 +78,19 @@ class Simulate:
 
         total_performance = np.sum(reward)
         self.performance = total_performance / failure
+
+        reward_2 = torch.zeros(len(pre_observation))
+        if self.policy_name == "DDPG_bay":
+            print("rew1 = ", reward)
+            reward_2 = rew(pre_observation, action).cpu().detach().numpy()
+            print("rew2 =", reward_2)
+        reward = reward_2 + reward
+        i = 0
+        while i < len(pre_observation):
+
+            dataset.push(pre_observation[i], action[i], observation[i], reward[i], done[i])
+            i = i + 1
+
         self._reward_converter(dataset, dataloader)
         return self.performance
 

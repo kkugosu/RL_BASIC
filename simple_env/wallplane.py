@@ -132,7 +132,9 @@ class WallPlane:
         self.player.update_rect()
         x_state = self.player.state[0]
         y_state = self.player.state[1]
-        reward = x_state + y_state - x_pre_state - y_pre_state
+        reward = -0.1
+        if (self.player.state[0] > 750) | (self.player.state[1] > 750):
+            reward = 10
         # print(reward)
         info = {}
         return self.player.state - np.array([self.SCREEN_WIDTH/2, self.SCREEN_HEIGHT/2]), reward, info

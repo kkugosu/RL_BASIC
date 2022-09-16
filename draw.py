@@ -35,3 +35,5 @@ npout = out.detach().numpy()
 print("??")
 sns.heatmap(npout)
 plt.show()
+
+newXY_t = torch.from_numpy(newXY)

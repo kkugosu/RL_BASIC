@@ -1,4 +1,4 @@
-from control import DQN, PG, AC, DDPG, SAC, TRPO, PPO, SAC_conti
+from control import DQN, PG, AC, DDPG, SAC, TRPO, PPO, SAC_conti, DDPG_bay
 from utils import render
 from simple_env import wallplane, plane, narrow
 import torch
@@ -79,11 +79,10 @@ if __name__ == "__main__":
             print("error")
     """
 
-
     valid = 0
     while valid == 0:
         print("enter RL control, {PG, DQN, AC, TRPO, PPO, DDPG, SAC}")
-        control = "DDPG" # input("->")
+        control = "DDPG_bay" # input("->")
         if control == "PG":
             valid = 1
         elif control == "DQN":
@@ -99,6 +98,8 @@ if __name__ == "__main__":
         elif control == "SAC":
             valid = 1
         elif control == "SAC_conti":
+            valid = 1
+        elif control == "DDPG_bay":
             valid = 1
         else:
             print("error")
@@ -153,6 +154,14 @@ if __name__ == "__main__":
             pass
         else:
             mechanism = DDPG.DDPGPolicy(*arg_list)
+            mechanism.training(load=load_)
+            # policy = mechanism.get_policy()
+
+    elif control == "DDPG_bay":
+        if env_name == "cart":
+            pass
+        else:
+            mechanism = DDPG_bay.DDPGPolicy(*arg_list)
             mechanism.training(load=load_)
             # policy = mechanism.get_policy()
 

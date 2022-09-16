@@ -56,9 +56,9 @@ class Policy:
 
             return n_a
 
-        elif self.policy == "DDPG":
+        elif (self.policy == "DDPG") | (self.policy == "DDPG_bay"):
             with torch.no_grad():
-                t_a = self.model(t_p_o) + torch.from_numpy((random.rand(2)-0.5)/10).type(torch.float32)
+                t_a = self.model(t_p_o) # + torch.from_numpy((random.rand(2)-0.5)/10).type(torch.float32)
             n_a = t_a.cpu().numpy()
             n_a_d = np.sqrt(np.sum(n_a ** 2))
             n_a = n_a / n_a_d

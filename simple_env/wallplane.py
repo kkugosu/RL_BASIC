@@ -66,62 +66,74 @@ class WallPlane:
         self.player.state = np.array([self.SCREEN_WIDTH/2, self.SCREEN_HEIGHT/2])
         self.big_wall1 = Wall(0, 0, 800, 20)
         self.big_wall2 = Wall(0, 780, 800, 20)
-        self.big_wall3 = Wall(0, 0, 20, 800)
-        self.big_wall4 = Wall(780, 0, 20, 800)
-        self.wall_1 = Wall(300, 200, 20, 120)
-        self.wall_2 = Wall(500, 100, 20, 200)
         self.wall_3 = Wall(100, 200, 200, 20)
-        self.wall_4 = Wall(600, 100, 20, 200)
         self.wall_5 = Wall(0, 300, 300, 20)
         self.wall_6 = Wall(500, 300, 300, 20)
-        self.wall_7 = Wall(500, 500, 20, 200)
-        self.wall_8 = Wall(600, 600, 20, 200)
         self.wall_9 = Wall(0, 400, 200, 20)
         self.wall_10 = Wall(500, 500, 300, 20)
         self.wall_11 = Wall(0, 600, 300, 20)
 
-        self.walls = pygame.sprite.Group()
-        self.walls.add(self.wall_1)
-        self.walls.add(self.wall_2)
-        self.walls.add(self.wall_3)
-        self.walls.add(self.wall_4)
-        self.walls.add(self.wall_5)
-        self.walls.add(self.wall_6)
-        self.walls.add(self.wall_7)
-        self.walls.add(self.wall_8)
-        self.walls.add(self.wall_9)
-        self.walls.add(self.wall_10)
-        self.walls.add(self.wall_11)
+        self.big_wall3 = Wall(0, 0, 20, 800)
+        self.big_wall4 = Wall(780, 0, 20, 800)
+        self.wall_1 = Wall(300, 200, 20, 120)
+        self.wall_2 = Wall(500, 100, 20, 200)
+        self.wall_4 = Wall(600, 100, 20, 200)
+        self.wall_7 = Wall(500, 500, 20, 200)
+        self.wall_8 = Wall(600, 600, 20, 200)
 
-        self.walls.add(self.big_wall1)
-        self.walls.add(self.big_wall2)
-        self.walls.add(self.big_wall3)
-        self.walls.add(self.big_wall4)
+        self.walls_1 = pygame.sprite.Group()
+        self.walls_2 = pygame.sprite.Group()
+
+        self.walls_2.add(self.wall_1)
+        self.walls_2.add(self.wall_2)
+        self.walls_1.add(self.wall_3)
+        self.walls_2.add(self.wall_4)
+        self.walls_1.add(self.wall_5)
+        self.walls_1.add(self.wall_6)
+        self.walls_2.add(self.wall_7)
+        self.walls_2.add(self.wall_8)
+        self.walls_1.add(self.wall_9)
+        self.walls_1.add(self.wall_10)
+        self.walls_1.add(self.wall_11)
+
+        self.walls_1.add(self.big_wall1)
+        self.walls_1.add(self.big_wall2)
+        self.walls_2.add(self.big_wall3)
+        self.walls_2.add(self.big_wall4)
 
     def reset(self):
         self.player.state = np.array([self.SCREEN_WIDTH/2, self.SCREEN_HEIGHT/2])
         return self.player.state - np.array([self.SCREEN_WIDTH/2, self.SCREEN_HEIGHT/2])
 
     def step(self, act):
-        x_pre_state = self.player.rect[0]
-        y_pre_state = self.player.rect[1]
-        self.player.state = self.player.state - act
+        x_pre_state = self.player.state[0]
+        y_pre_state = self.player.state[1]
+        self.player.state = self.player.state + act
         self.player.update_rect()
-        for args in self.walls:
+        for args in self.walls_1:
             if pygame.sprite.collide_rect(self.player, args):
-
-                x_state = self.player.rect[0]
                 y_state = self.player.rect[1]
-                self.player.state = self.player.state + act
-                if x_pre_state != x_state:
-                    act[0] = -act[0]
+                self.player.state[1] = self.player.state[1] - act[1]
                 if y_pre_state != y_state:
                     act[1] = -act[1]
-                self.player.state = self.player.state - act
+                self.player.state[1] = self.player.state[1] + act[1]
+                break
+
+        for args in self.walls_2:
+            if pygame.sprite.collide_rect(self.player, args):
+                x_state = self.player.rect[0]
+                self.player.state[0] = self.player.state[0] - act[0]
+                if x_pre_state != x_state:
+                    act[0] = -act[0]
+                self.player.state[0] = self.player.state[0] + act[0]
                 break
                 # collide when this change
+
         self.player.update_rect()
-        reward = (self.player.state[0] - self.SCREEN_WIDTH/2 + self.player.state[1] - self.SCREEN_HEIGHT/2)/10
+        x_state = self.player.state[0]
+        y_state = self.player.state[1]
+        reward = x_state + y_state - x_pre_state - y_pre_state
+        # print(reward)
         info = {}
         return self.player.state - np.array([self.SCREEN_WIDTH/2, self.SCREEN_HEIGHT/2]), reward, info
 
@@ -134,7 +146,9 @@ class WallPlane:
                 self.close()
                 exit(0)
         self.screen.fill((255, 255, 255))
-        for args in self.walls:
+        for args in self.walls_1:
+            self.screen.blit(args.surf, args.rect)
+        for args in self.walls_2:
             self.screen.blit(args.surf, args.rect)
         self.screen.blit(self.player.surf, self.player.rect)
         pygame.display.flip()
@@ -144,7 +158,6 @@ class WallPlane:
             pygame.display.quit()
             pygame.quit()
 
-
 """
 plane = WallPlane()
 plane.reset()
@@ -152,20 +165,26 @@ plane.reset()
 running = True
 
 i = 1
-
+state = [0, 0]
 while running:
 
     action = (np.random.rand(2)*10)-5
-
-    plane.step(action)
-
+    print("action", action)
+    print(state)
+    state, reward, info = plane.step(action)
+    print(reward)
+    print(state)
     plane.render()
 
 # Done! Time to quit.
 
 plane.close()
 
+
 """
+
+
+
 
 
 

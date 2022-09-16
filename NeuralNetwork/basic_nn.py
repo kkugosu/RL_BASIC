@@ -11,9 +11,12 @@ class ValueNN(nn.Module):
         # self.flatten = nn.Flatten()
         self.elu_stack = nn.Sequential(
             nn.Linear(input_size, hidden_size),
-            nn.ELU(),
+            nn.Tanh(),
             nn.Linear(hidden_size, hidden_size),
-            nn.ELU(),
+            nn.Tanh(),
+            nn.Linear(hidden_size, hidden_size),
+            nn.Tanh(),
+            nn.Linear(hidden_size, hidden_size),
             nn.Linear(hidden_size, output_size),
 
         )

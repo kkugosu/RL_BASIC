@@ -18,7 +18,7 @@ class Simulate:
         total_num = 0
         pause = 0
         failure = 1
-        traj_l = capacity/10
+        traj_l = 250
 
         while len(dataset) != 0:
             dataset.pop()
@@ -34,7 +34,7 @@ class Simulate:
                     with torch.no_grad():
                         n_a = self.policy.select_action(n_p_s)
                     # n_s, n_r, n_i = self.env.step(n_a[_index*self.a_l:(_index+1)*self.a_l])
-                    n_s, n_r, n_i = self.env.step(n_a)
+                    n_s, n_r, n_i = self.env.step(n_a * 3)
                     if (t+1) == traj_l:
                         done = 1
                     else:

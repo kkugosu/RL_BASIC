@@ -1,6 +1,11 @@
 from control import DQN, PG, AC, DDPG, SAC, TRPO, PPO, SAC_conti
 from utils import render
 from simple_env import wallplane, plane, narrow
+import torch
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 if __name__ == "__main__":
 
@@ -99,22 +104,22 @@ if __name__ == "__main__":
             print("error")
 
     print("enter HIDDEN_SIZE recommend 32")
-    HIDDEN_SIZE = 8 # get_integer()
+    HIDDEN_SIZE = 100 # get_integer()
 
     print("enter batchsize recommend 1000")
-    BATCH_SIZE = 200 # get_integer()
+    BATCH_SIZE = 2000 # get_integer()
 
     print("enter memory capacity recommend 1000")
-    CAPACITY = 200 # get_integer()
+    CAPACITY = 2000 # get_integer()
 
     print("memory reset time recommend 100")
-    TRAIN_ITER = 500 # get_integer()
+    TRAIN_ITER = 200 # get_integer()
 
     print("train_iteration per memory recommend 10")
     MEMORY_ITER = 1 # get_integer()
 
     print("enter learning rate recommend 0.01")
-    learning_rate = 0.03 # get_float()
+    learning_rate = 0.001 # get_float()
 
     print("enter eligibility trace step, if pg: 100")
     e_trace = 1 # get_integer()
@@ -124,24 +129,24 @@ if __name__ == "__main__":
 
     print("load previous model 0 or 1")
     load_ = 0 # input("->")
-
+    mechanism = None
     arg_list = [BATCH_SIZE, CAPACITY, HIDDEN_SIZE, learning_rate,
                 TRAIN_ITER, MEMORY_ITER, control, env_name, e_trace, precision, done_penalty]
     print(arg_list)
     if control == "PG":
         mechanism = PG.PGPolicy(*arg_list)
         mechanism.training(load=load_)
-        policy = mechanism.get_policy()
+        # policy = mechanism.get_policy()
 
     elif control == "DQN":
         mechanism = DQN.DQNPolicy(*arg_list)
         mechanism.training(load=load_)
-        policy = mechanism.get_policy()
+        # policy = mechanism.get_policy()
 
     elif control == "AC":
         mechanism = AC.ACPolicy(*arg_list)
         mechanism.training(load=load_)
-        policy = mechanism.get_policy()
+        # policy = mechanism.get_policy()
 
     elif control == "DDPG":
         if env_name == "cart":
@@ -149,30 +154,34 @@ if __name__ == "__main__":
         else:
             mechanism = DDPG.DDPGPolicy(*arg_list)
             mechanism.training(load=load_)
-            policy = mechanism.get_policy()
+            # policy = mechanism.get_policy()
 
     elif control == "TRPO":
         mechanism = TRPO.TRPOPolicy(*arg_list)
         mechanism.training(load=load_)
-        policy = mechanism.get_policy()
+        # policy = mechanism.get_policy()
 
     elif control == "PPO":
         mechanism = PPO.PPOPolicy(*arg_list)
         mechanism.training(load=load_)
-        policy = mechanism.get_policy()
+        # policy = mechanism.get_policy()
 
     elif control == "SAC":
         mechanism = SAC.SACPolicy(*arg_list)
         mechanism.training(load=load_)
-        policy = mechanism.get_policy()
+        # policy = mechanism.get_policy()
 
     elif control == "SAC_conti":
         mechanism = SAC_conti.SACPolicy(*arg_list)
-        mechanism.update(load=load_)
-        policy = mechanism.get_policy()
+        mechanism.training(load=load_)
+        # policy = mechanism.get_policy()
 
     else:
         print("error")
 
+    #mechanism.updatedPG.load_state_dict(torch.load(mechanism.PARAM_PATH + "/18.pth"))
+    #mechanism.updatedDQN.load_state_dict(torch.load(mechanism.PARAM_PATH + "/28.pth"))
+
+    policy = mechanism.get_policy()
     my_rend = render.Render(policy, *arg_list)
     my_rend.rend()

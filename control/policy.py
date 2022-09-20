@@ -65,6 +65,15 @@ class Policy:
 
             return n_a
 
+        elif self.policy == "TEST":
+            n_a = np.array([0, 1])
+            if len(n_p_o) == 2:
+                return n_a
+            else:
+                n_a = np.expand_dims(n_a, axis=0)
+                n_a = np.repeat(n_a, repeats=len(n_p_o), axis=0)
+                return n_a
+
         else:
             print("model name error")
             return None

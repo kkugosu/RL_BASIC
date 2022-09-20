@@ -53,7 +53,7 @@ class BayesianLinear(nn.Module):
 
     @staticmethod
     def _rep(mu):
-        return mu + torch.randn_like(mu) * 0.1
+        return mu + torch.randn_like(mu) * 0.01
 
     def make_freeze(self, freeze):
         self.freeze = freeze
@@ -86,9 +86,9 @@ class BayesianModel(nn.Module):
         self.b_linear3 = BayesianLinear(hidden_size, output_size)
         self.layer = nn.Sequential(
             self.b_linear1,
-            nn.Tanh(),
+            nn.ELU(),
             self.b_linear2,
-            nn.Tanh(),
+            nn.ELU(),
             self.b_linear3
         )
 

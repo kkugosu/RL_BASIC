@@ -23,7 +23,7 @@ class Render(BASE.BasePolicy):
             n_p_o = n_o
             self.env.render()
             t = t + 1
-            if t % 200 == 0:
+            if t % 100 == 0:
                 print("Episode finished after {} timesteps".format(t))
                 fail_time = fail_time + 1
                 local = 0

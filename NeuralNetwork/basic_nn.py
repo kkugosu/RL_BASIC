@@ -11,12 +11,9 @@ class ValueNN(nn.Module):
         # self.flatten = nn.Flatten()
         self.elu_stack = nn.Sequential(
             nn.Linear(input_size, hidden_size),
-            nn.Tanh(),
+            nn.ELU(),
             nn.Linear(hidden_size, hidden_size),
-            nn.Tanh(),
-            nn.Linear(hidden_size, hidden_size),
-            nn.Tanh(),
-            nn.Linear(hidden_size, hidden_size),
+            nn.ELU(),
             nn.Linear(hidden_size, output_size),
 
         )
@@ -33,9 +30,9 @@ class ProbNN(nn.Module):
         # self.flatten = nn.Flatten()
         self.linear_relu_stack = nn.Sequential(
             nn.Linear(input_size, hidden_size),
-            nn.LeakyReLU(0.1),
+            nn.ELU(),
             nn.Linear(hidden_size, hidden_size),
-            nn.LeakyReLU(0.1),
+            nn.ELU(),
             nn.Linear(hidden_size, output_size),
             nn.Softmax(dim=-1)
         )

@@ -58,7 +58,7 @@ class DDPGPolicy(BASE.BasePolicy):
         sort_t = sorted_state_y.T
         re_2 = sort_t[-1] - sort_t[0]
 
-        return re_1 + re_2
+        return (re_1 + re_2)/torch.mean(re_1 + re_2)
 
     def bay_train(self):
         i = 0
@@ -70,25 +70,27 @@ class DDPGPolicy(BASE.BasePolicy):
             t_o = torch.tensor(n_o, dtype=torch.float32).to(self.device)
 
             sa_in = torch.cat((t_p_o, t_a), -1)
-            print("sain", sa_in.size())
             output = self.dynamic(sa_in)
-            print("output", output.size())
             print(self.dynamic.kld_loss())
+            print("output == ", output)
+            print("t_o == ", t_o)
             print(self.criterion(output.squeeze(), t_o.squeeze()))
             loss = self.criterion(output.squeeze(), t_o.squeeze()) + self.dynamic.kld_loss()
             self.optimizer.zero_grad()
             loss.backward()
             for param in self.dynamic.parameters():
-                param.grad.data.clamp_(-1, 1)
+                param.grad.data.clamp_(-10, 10)
+                # print(param.grad)
             self.optimizer.step()
             i = i + 1
-
+            return loss
 
     def training(self, load=int(0)):
         if int(load) == 1:
             print("loading")
             self.updatedPG.load_state_dict(torch.load(self.PARAM_PATH + "/1.pth"))
             self.updatedDQN.load_state_dict(torch.load(self.PARAM_PATH + "/2.pth"))
+            self.dynamic.load_state_dict(torch.load(self.PARAM_PATH + "/3.pth"))
             self.baseDQN.load_state_dict(self.updatedDQN.state_dict())
             self.baseDQN.eval()
             print("loading complete")
@@ -97,73 +99,95 @@ class DDPGPolicy(BASE.BasePolicy):
         i = 0
         torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/01.pth")
         torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/02.pth')
+        torch.save(self.dynamic.state_dict(), self.PARAM_PATH + '/03.pth')
         while i < self.t_i:
-            print(i)
+            print("step = ", i)
             i = i + 1
             self.buffer.renewal_memory(self.ca, self.data, self.dataloader, self.reward)
+            bay_loss = self.bay_train()
             pg_loss, dqn_loss = self.train_per_buff()
             self.writer.add_scalar("pg/loss", pg_loss, i)
             self.writer.add_scalar("dqn/loss", dqn_loss, i)
             self.writer.add_scalar("performance", self.buffer.get_performance(), i)
             torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/1.pth")
             torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/2.pth')
+            torch.save(self.dynamic.state_dict(), self.PARAM_PATH + '/3.pth')
             if i == 100:
                 torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/11.pth")
                 torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/21.pth')
+                torch.save(self.dynamic.state_dict(), self.PARAM_PATH + '/31.pth')
             if i == 200:
                 torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/12.pth")
                 torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/22.pth')
+                torch.save(self.dynamic.state_dict(), self.PARAM_PATH + '/32.pth')
             if i == 300:
                 torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/13.pth")
                 torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/23.pth')
+                torch.save(self.dynamic.state_dict(), self.PARAM_PATH + '/33.pth')
             if i == 400:
                 torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/14.pth")
                 torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/24.pth')
+                torch.save(self.dynamic.state_dict(), self.PARAM_PATH + '/34.pth')
             if i == 500:
                 torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/15.pth")
                 torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/25.pth')
+                torch.save(self.dynamic.state_dict(), self.PARAM_PATH + '/35.pth')
             if i == 600:
                 torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/16.pth")
                 torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/26.pth')
+                torch.save(self.dynamic.state_dict(), self.PARAM_PATH + '/36.pth')
             if i == 700:
                 torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/17.pth")
                 torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/27.pth')
+                torch.save(self.dynamic.state_dict(), self.PARAM_PATH + '/37.pth')
             if i == 800:
                 torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/18.pth")
                 torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/28.pth')
+                torch.save(self.dynamic.state_dict(), self.PARAM_PATH + '/38.pth')
             if i == 900:
                 torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/19.pth")
                 torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/29.pth')
+                torch.save(self.dynamic.state_dict(), self.PARAM_PATH + '/39.pth')
             if i == 1000:
                 torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/110.pth")
                 torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/210.pth')
+                torch.save(self.dynamic.state_dict(), self.PARAM_PATH + '/310.pth')
             if i == 1100:
                 torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/111.pth")
                 torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/211.pth')
+                torch.save(self.dynamic.state_dict(), self.PARAM_PATH + '/311.pth')
             if i == 1200:
                 torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/112.pth")
                 torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/212.pth')
+                torch.save(self.dynamic.state_dict(), self.PARAM_PATH + '/312.pth')
             if i == 1300:
                 torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/113.pth")
                 torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/213.pth')
+                torch.save(self.dynamic.state_dict(), self.PARAM_PATH + '/313.pth')
             if i == 1400:
                 torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/114.pth")
                 torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/214.pth')
+                torch.save(self.dynamic.state_dict(), self.PARAM_PATH + '/314.pth')
             if i == 1500:
                 torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/115.pth")
                 torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/215.pth')
+                torch.save(self.dynamic.state_dict(), self.PARAM_PATH + '/315.pth')
             if i == 1600:
                 torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/116.pth")
                 torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/216.pth')
+                torch.save(self.dynamic.state_dict(), self.PARAM_PATH + '/316.pth')
             if i == 1700:
                 torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/117.pth")
                 torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/217.pth')
+                torch.save(self.dynamic.state_dict(), self.PARAM_PATH + '/317.pth')
             if i == 1800:
                 torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/118.pth")
                 torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/218.pth')
+                torch.save(self.dynamic.state_dict(), self.PARAM_PATH + '/318.pth')
             if i == 1900:
                 torch.save(self.updatedPG.state_dict(), self.PARAM_PATH + "/119.pth")
                 torch.save(self.updatedDQN.state_dict(), self.PARAM_PATH + '/219.pth')
+                torch.save(self.dynamic.state_dict(), self.PARAM_PATH + '/319.pth')
 
             self.baseDQN.load_state_dict(self.updatedDQN.state_dict())
             self.baseDQN.eval()

@@ -1,4 +1,4 @@
-from control import DQN, PG, AC, DDPG, SAC, TRPO, PPO, SAC_conti, DDPG_bay
+from control import DQN, PG, AC, DDPG, SAC, TRPO, PPO, SAC_conti, DDPG_bay, TEST
 from utils import render
 from simple_env import wallplane, plane, narrow
 import torch
@@ -82,7 +82,7 @@ if __name__ == "__main__":
     valid = 0
     while valid == 0:
         print("enter RL control, {PG, DQN, AC, TRPO, PPO, DDPG, SAC}")
-        control = "DDPG_bay" # input("->")
+        control = "TEST" # input("->")
         if control == "PG":
             valid = 1
         elif control == "DQN":
@@ -101,26 +101,28 @@ if __name__ == "__main__":
             valid = 1
         elif control == "DDPG_bay":
             valid = 1
+        elif control == "TEST":
+            valid = 1
         else:
             print("error")
 
     print("enter HIDDEN_SIZE recommend 32")
-    HIDDEN_SIZE = 100 # get_integer()
+    HIDDEN_SIZE = 256 # get_integer()
 
     print("enter batchsize recommend 1000")
-    BATCH_SIZE = 2000 # get_integer()
+    BATCH_SIZE = 100 # get_integer()
 
     print("enter memory capacity recommend 1000")
-    CAPACITY = 2000 # get_integer()
+    CAPACITY = 100 # get_integer()
 
     print("memory reset time recommend 100")
-    TRAIN_ITER = 200 # get_integer()
+    TRAIN_ITER = 100000 # get_integer()
 
     print("train_iteration per memory recommend 10")
     MEMORY_ITER = 1 # get_integer()
 
     print("enter learning rate recommend 0.01")
-    learning_rate = 0.001 # get_float()
+    learning_rate = 1e-6 # get_float()
 
     print("enter eligibility trace step, if pg: 100")
     e_trace = 1 # get_integer()
@@ -162,6 +164,14 @@ if __name__ == "__main__":
             pass
         else:
             mechanism = DDPG_bay.DDPGPolicy(*arg_list)
+            mechanism.training(load=load_)
+            # policy = mechanism.get_policy()
+
+    elif control == "TEST":
+        if env_name == "cart":
+            pass
+        else:
+            mechanism = TEST.TEST(*arg_list)
             mechanism.training(load=load_)
             # policy = mechanism.get_policy()
 
